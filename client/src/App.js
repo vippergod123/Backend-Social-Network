@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import axios from "axios"
 import Gallery from "react-grid-gallery"
 
-
 const captionStyle = {
   backgroundColor: "rgba(0, 0, 0, 0.7)",
   maxHeight: "240px",
