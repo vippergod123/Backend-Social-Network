@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/blockchain', blockchainRouter);
 app.use('/profile', profileRouter);
-app.use('/create_account', createAccountRouter)
+app.use('/createaccount', createAccountRouter)
 app.use('/sharepost', sharePostRouter)
 
 // catch 404 and forward to error handler
