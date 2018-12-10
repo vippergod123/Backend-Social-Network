@@ -5,9 +5,7 @@ const blockchainKey = require('../config/blockchainKey');
 /* GET users listing. */
 router.post('/', function(req, res, next) {
 
-    console.log(req.query.public_key);
-    
- 
+  console.log(req.query.public_key);
   axios.get(getTransactionFromPublicNode)
   .then(resp => {
       console.log(resp);

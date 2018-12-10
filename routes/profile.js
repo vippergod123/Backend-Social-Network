@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
-const transaction = require('../lib/transaction');
+const transaction = require('../lib/handleTransaction');
 
 const blockchainKey = require('../config/blockchainKey');
 
