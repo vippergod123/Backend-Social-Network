@@ -4,9 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var flickrRouter = require('./routes/flickr');
+///
 
+var indexRouter = require('./routes/index');
+var profileRouter = require('./routes/profile');
+var sharePostRouter = require('./routes/sharePost');
+var blockchainRouter = require('./routes/blockchain');
+
+//
 var app = express();
 
 // view engine setup
@@ -20,7 +25,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/flickr', flickrRouter);
+app.use('/blockchain', blockchainRouter);
+app.use('/profile', profileRouter);
+app.use('/sharepost', sharePostRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

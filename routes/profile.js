@@ -1,10 +1,14 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
-
+const blockchainKey = require('../config/blockchainKey');
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  axios.get('https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&api_key=c8eff296a7a5a81f1463416b4b16ad71&extras=url_l%2C+owner_name%2C+views&per_page=20&page=1&format=json&nojsoncallback=1')
+
+  var getTransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+blockchainKey.public_key+"%27%22"
+  console.log(getTransactionFromPublicNode);
+  
+  axios.get(getTransactionFromPublicNode)
   .then(resp => {
     res.json(
       resp.data
