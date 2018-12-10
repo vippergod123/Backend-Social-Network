@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var profile = require('../lib/transaction');
+var profile = require('../lib/handleTransaction');
 
 const { Keypair } = require('stellar-base');
 

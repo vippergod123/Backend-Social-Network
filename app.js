@@ -8,6 +8,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var profileRouter = require('./routes/profile');
+var createAccountRouter = require('./routes/create_account');
 var sharePostRouter = require('./routes/sharePost');
 var blockchainRouter = require('./routes/blockchain');
 
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/blockchain', blockchainRouter);
 app.use('/profile', profileRouter);
+app.use('/create_account', createAccountRouter)
 app.use('/sharepost', sharePostRouter)
 
 // catch 404 and forward to error handler
