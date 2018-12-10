@@ -1,18 +1,24 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
-const blockchainKey = require('../config/blockchainKey');
-/* GET users listing. */
-router.get('/', function(req, res, next) {
+const transaction = require('../lib/transaction');
 
-  var getTransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+blockchainKey.public_key+"%27%22"
-  console.log(getTransactionFromPublicNode);
-  
-  axios.get(getTransactionFromPublicNode)
-  .then(resp => {
-    res.json(
-      resp.data
-    )
+const blockchainKey = require('../config/blockchainKey');
+
+router.post('/', function(req, res, next) {
+  var TransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+req.body.account+"%27%22";
+  axios.get(TransactionFromPublicNode)
+  .then(response => {
+    const data = response.data.result.txs.map((each) => {
+      each.tx = transaction.decodeTransaction(each.tx);
+      each.tx.memo = each.tx.memo.toString();
+      each.tx.signature = each.tx.signature.toString('hex');
+      return each;
+    })
+    res.status(200).json({
+      message: 'get info success',
+      data: data,
+    });
   })
   .catch(error => {
     console.log(error);
