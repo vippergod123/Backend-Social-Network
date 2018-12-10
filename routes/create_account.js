@@ -6,7 +6,7 @@ const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
 /* GET users listing. */
 router.post('/', function(req, res, next) {
-  const public_key = req.body.public_key
+  const public_key = req.query.public_key
   console.log(public_key);
 
     console.log(req.query.public_key);
