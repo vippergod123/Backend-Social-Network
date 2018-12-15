@@ -4,8 +4,6 @@ var profile = require('../lib/handleTransaction');
 
 const { Keypair } = require('stellar-base');
 
-
-/* GET home page. */
 router.post('/', function(req, res, next) {
 //   var id = res.query.id;
 //   var operation = res.query.operation;
