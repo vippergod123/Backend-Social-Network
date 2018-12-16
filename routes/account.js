@@ -12,7 +12,7 @@ function calculateAmount(data, public_key) {
     {
         if (block.tx.operation === "payment")
         {
-            if(block.tx.account === public_key)
+            if (block.tx.account === public_key)
                 amount -= block.tx.params.amount;
             else 
                 amount += block.tx.params.amount;
@@ -34,7 +34,7 @@ router.post('/calculate_amount', function(req, res, next) {
         res.status(200).json({
             message: 'calculate amount success',
             status: 200,
-            amount: calculateAmount(data),
+            amount: calculateAmount(data, req.body.public_key),
             data: data,
         });
     })
