@@ -13,14 +13,10 @@ router.post('/', function(req, res, next) {
 
   handleTransaction.encodeCreateAccountTransaction(blockchainKey.public_key,req.query.public_key,blockchainKey.private_key)
   .then((response)=>{ 
-    console.log(response);
     axios.get(broadcastRequest+response).then((resp) => {
-      console.log(resp.data);
       handleTransaction.encodePaymentTransaction(blockchainKey.public_key, req.query.public_key, 100, blockchainKey.private_key)
       .then((response)=>{
-        console.log(response);
         axios.get(broadcastRequest+response).then((resp)=>{
-          console.log(resp.data);
           res.status(200).json({
             message: "create success",
           })
