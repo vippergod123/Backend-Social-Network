@@ -7,7 +7,7 @@ var logger = require('morgan');
 var accountRouter = require('./routes/account');
 var broadCastCommitRouter = require('./routes/broadcast_commit');
 var createAccountRouter = require('./routes/create_account');
-var profileInfoRouter = require('./routes/profile_info');
+var profileRouter = require('./routes/profile');
 var sharePostRouter = require('./routes/sharePost');
 //
 var app = express();
@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/account', accountRouter);
 app.use('/broadcast_commit', broadCastCommitRouter);
 app.use('/create_account', createAccountRouter);
-app.use('/profile_info', profileInfoRouter);
+app.use('/profile', profileRouter);
 app.use('/sharepost', sharePostRouter);
 
 // catch 404 and forward to error handler
