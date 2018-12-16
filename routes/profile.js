@@ -13,6 +13,12 @@ router.post('/', function(req, res, next) {
       each.tx = transaction.decodeTransaction(each.tx);
       each.tx.memo = each.tx.memo.toString();
       each.tx.signature = each.tx.signature.toString('hex');
+      if(each.tx.params.content)
+      {
+        const content = each.tx.params.content.toString();
+        // each.tx.params.content = JSON.parse(content);
+        each.tx.params.content = content;
+      }
       return each;
     })
     res.status(200).json({
