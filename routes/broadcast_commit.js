@@ -4,7 +4,7 @@ const axios = require('axios');
 const Domain = require('../config/nodePublic');
 
 router.post('/', function(req, res, next) {
-  var broadcastRequest = Domain.komodoDomain + "broadcast_tx_commit?tx=" + req.body.enCodePayment;
+  var broadcastRequest = Domain.komodoDomain + "broadcast_tx_commit?tx=" + req.body.enCodeTransaction;
   axios.get(broadcastRequest)
     .then(response => {
         res.status(200).json({

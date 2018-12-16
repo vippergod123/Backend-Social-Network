@@ -4,10 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 ///
-var createAccountRouter = require('./routes/create_account');
 var accountRouter = require('./routes/account');
-var profileRouter = require('./routes/profile');
 var broadCastCommitRouter = require('./routes/broadcast_commit');
+var createAccountRouter = require('./routes/create_account');
+var profileInfoRouter = require('./routes/profile_info');
 var sharePostRouter = require('./routes/sharePost');
 //
 var app = express();
@@ -21,10 +21,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/create_account', createAccountRouter);
 app.use('/account', accountRouter);
-app.use('/profile', profileRouter);
 app.use('/broadcast_commit', broadCastCommitRouter);
+app.use('/create_account', createAccountRouter);
+app.use('/profile_info', profileInfoRouter);
 app.use('/sharepost', sharePostRouter);
 
 // catch 404 and forward to error handler
