@@ -3,7 +3,14 @@ var router = express.Router();
 const axios = require('axios');
 const transaction = require('../lib/handleTransaction');
 
-const blockchainKey = require('../config/blockchainKey');
+function isJson(str) {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
 
 router.post('/', function(req, res, next) {
   var TransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+req.body.account+"%27%22";
@@ -16,8 +23,10 @@ router.post('/', function(req, res, next) {
       if(each.tx.params.content)
       {
         const content = each.tx.params.content.toString();
-        // each.tx.params.content = JSON.parse(content);
-        each.tx.params.content = content;
+        if(isJson(content))
+          each.tx.params.content = JSON.parse(content);
+        else
+          each.tx.params.content = content;
       }
       return each;
     })
