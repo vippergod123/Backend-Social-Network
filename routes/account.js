@@ -24,7 +24,7 @@ function calculateAmount(data, public_key) {
 router.post('/calculate_amount', function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
-    .then(response => {
+    .then((response) => {
         const data = response.data.result.txs.map((each) => {
             each.tx = transaction.decodeTransaction(each.tx);
             each.tx.memo = each.tx.memo.toString();
@@ -56,7 +56,7 @@ function findSequenceAvailable(data, public_key) {
 router.post('/sequence_available', function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
-    .then(response => {
+    .then((response) => {
         const data = response.data.result.txs.map((each) => {
             each.tx = transaction.decodeTransaction(each.tx);
             each.tx.memo = each.tx.memo.toString();

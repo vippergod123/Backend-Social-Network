@@ -8,7 +8,7 @@ const blockchainKey = require('../config/blockchainKey');
 router.post('/', function(req, res, next) {
   var TransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+req.body.account+"%27%22";
   axios.get(TransactionFromPublicNode)
-  .then(response => {
+  .then((response) => {
     const data = response.data.result.txs.map((each) => {
       each.tx = transaction.decodeTransaction(each.tx);
       each.tx.memo = each.tx.memo.toString();
