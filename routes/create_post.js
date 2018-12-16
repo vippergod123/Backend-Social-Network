@@ -8,11 +8,12 @@ const handleTransaction = require('../lib/handleTransaction');
 
 
 
-router.post('/', function (req, res, next) { 
-    var a = new Buffer.from(req.body.content, 'utf8')
-    
+router.post('/', function (req, res, next) {
+    var post = { type: 1, text: req.body.content, }
+    var content = new Buffer.from(JSON.stringify(post));
+    console.log(JSON.stringify(post));
     var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
-    handleTransaction.encodePostTransaction(blockchainKey.public_key, a, blockchainKey.private_key)
+    handleTransaction.encodePostTransaction(blockchainKey.public_key, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
             console.log(resp);
