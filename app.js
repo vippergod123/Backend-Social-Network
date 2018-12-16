@@ -9,7 +9,6 @@ var broadCastCommitRouter = require('./routes/broadcast_commit');
 var createAccountRouter = require('./routes/create_account');
 var createPostRouter = require('./routes/create_post');
 var profileRouter = require('./routes/profile');
-var sharePostRouter = require('./routes/sharePost');
 //
 var app = express();
 // view engine setup
@@ -27,7 +26,7 @@ app.use('/broadcast_commit', broadCastCommitRouter);
 app.use('/create_account', createAccountRouter);
 app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
-app.use('/sharepost', sharePostRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
