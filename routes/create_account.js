@@ -35,20 +35,6 @@ router.post('/', function(req, res, next) {
     })
   })
   
-  
-  
-
-//     axios.get(broadcastRequest+encodeCreateAccount)
-//   .then(response => {
-//       axios.get(broadcastRequest+encodePayment)
-//       console.log(response.data);
-//       res.json(response.data)
-//   })
-//   .then(response => { console.log(response.data); res.json(response.data)})
-//   .catch(error => {
-//     console.log(error);
-//   });
-   
 });
 
 module.exports = router;
