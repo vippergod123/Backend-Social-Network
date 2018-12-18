@@ -40,6 +40,10 @@ router.post('/calculate_amount', function(req, res, next) {
     })
     .catch(error => {
         console.log(error);
+        res.status(201).json({
+            message: 'calculate amount  error',
+            status: 201,
+        });
     });
 });
 
@@ -71,6 +75,40 @@ router.post('/sequence_available', function(req, res, next) {
     })
     .catch(error => {
         console.log(error);
+        res.status(201).json({
+            message: 'sequence error',
+            status: 201,
+        });
+    });
+});
+
+const BANDWIDTH_PERIOD = 86400;
+const MAX_BLOCK_SIZE = 22020096;
+const RESERVE_RATIO = 1;
+const MAX_CELLULOSE = Number.MAX_SAFE_INTEGER;
+const NETWORK_BANDWIDTH = RESERVE_RATIO * MAX_BLOCK_SIZE * BANDWIDTH_PERIOD;
+
+const bandwidthLimit = account.balance / MAX_CELLULOSE * NETWORK_BANDWIDTH;
+// 10 * 86400 - /
+router.post('/calculate_energy', function(req, res, next) {
+    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
+    axios.get(TransactionFromPublicNode)
+    .then((response) => {
+        const data = response.data.result.txs;
+        
+        res.status(200).json({
+            message: 'calculate energy success',
+            status: 200,
+            amount: calculateAmount(data, req.body.public_key),
+            data: data,
+        });
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(201).json({
+            message: 'calculate energy  error',
+            status: 201,
+        });
     });
 });
 

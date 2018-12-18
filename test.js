@@ -76,7 +76,7 @@ function PushBlockToFirebase (block) {
 
 var semaphore = 0;
 
-// function IntervalGetAllBlock() {
+function IntervalGetAllBlock() {
     setInterval(() => {
         if ( numberBlocks < old_last_height && semaphore === 0) {
             semaphore++;
@@ -105,8 +105,7 @@ var semaphore = 0;
             })
         }
     },2 *1000)
-// }
+}
 
 module.exports.IntervalGetHeightBlock = IntervalGetHeightBlock;
-// module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
-
+module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
