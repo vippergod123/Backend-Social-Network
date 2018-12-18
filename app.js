@@ -10,9 +10,13 @@ var createAccountRouter = require('./routes/create_account');
 var createPostRouter = require('./routes/create_post');
 var profileRouter = require('./routes/profile');
 var paymentRouter = require('./routes/payment');
-var asyncBlock = require('./lib/AsyncBlock');
 
-asyncBlock.IntervalGetAllBlock();
+var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
+var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
+
+IntervalGetAccount();
+IntervalGetAllBlock();
+
 asyncBlock.IntervalGetHeightBlock();
 var app = express();
 // view engine setup

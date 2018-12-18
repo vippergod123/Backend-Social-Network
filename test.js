@@ -5,24 +5,65 @@ var router = express.Router();
 const {firestore} = require('./config/firebaseConfig');
 
 
-const decodeTransaction = (data) => {  
-    var transaction = v1.decode(Buffer.from(data, 'base64'));
-    return transaction;
-}
-var old_last_height = 20000;
-var numberBlocks = 1;
-var newBlock =[];
+const Block_Dat = firestore.collection("Block_Dat")
+const FirestoreAccount = firestore.collection("Account")
 
-function IntervalGetHeightBlock(){
+var last_block_height = 20000;
+var currentBlock = -1;
+var createAccountBlock = new Array();
+var paymentBlock = new Array();
+var postBlock = new Array();
+var updateBlock = new Array();
+var blockchainTransaction = new Array();
+var semaphore = 0;
+
+
+
+Block_Dat.doc("block").get().then( (snapshot) => { 
+    var data = snapshot.data()
+    last_block_height = data.last_block_height
+    currentBlock = data.currentBlock
+    blockchainTransaction = data.block
+})
+
+
+var accountLastBlock = 9999;
+var accountCurrentBlock= -1;
+FirestoreAccount.doc("AccountStatus").get().then( (snapshot) => { 
+    var data = snapshot.data()
+    accountLastBlock = data.last_block_height
+    accountCurrentBlock = data.currentBlock
+    
+    console.log(accountLastBlock);
+    console.log(accountCurrentBlock);
+    
+})
+
+
+function UpdateLastBlockAndCurrent2Firebase( last_block_height, currentBlock) { 
+    Block_Dat.doc("block")
+    .update({
+        last_block_height: last_block_height,
+        currentBlock: currentBlock,
+    })
+    .then(() => { 
+        console.log("Update current and last block\n");
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+}
+
+// function IntervalGetHeightBlock(){
     setInterval( () => { 
         var getLastHeightBlock = "https://komodo.forest.network/abci_info"
         axios.get(getLastHeightBlock)
         .then((response) => {
-            var new_last_height = response.data.result.response.last_block_height;
-            if (new_last_height > old_last_height) {
-                old_last_height = new_last_height;
-                console.log(old_last_height);
-                
+            
+            
+            var new_last_height = parseInt(response.data.result.response.last_block_height);
+            if (new_last_height > last_block_height) {
+                last_block_height = accountLastBlock =  new_last_height;
             }
         })
         .catch(err => {
@@ -30,27 +71,21 @@ function IntervalGetHeightBlock(){
         })
         
     },2 * 1000)
-}
+// }
 
-var createAccountBlock = new Array();
-var paymentBlock = new Array();
-var postBlock = new Array();
-var updateBlock = new Array();
-var blockchainTransaction = new Array();
 
 function PushBlockToFirebase (block) {
     return new Promise((resolve, reject) => {     
         if(block.header.num_txs === '0') {
-            reject("txs is null");
+            reject("txs is NULL");
         }
         else {
             blockchainTransaction.push(block);
-            const sampleData = firestore.collection("Block_Dat")
-            sampleData.doc("block").set({
+            Block_Dat.doc("block").update({
                 block: blockchainTransaction,
             })
             .then(() => {
-                resolve("push to firebase success");
+                resolve("push to firebase SUCCESS");
             })
             .catch(err => {
                 console.log("Firebase Error - " + err);
@@ -60,29 +95,123 @@ function PushBlockToFirebase (block) {
     })
 }
 
-var semaphore = 0;
+var accountForest = new Object();
+function PushAccountToFirebase (block) {
+    return new Promise((resolve, reject) => {     
+        if(block.header.num_txs === '0') {
+            reject("txs is NULL");
+        }
+        else {
+            blockchainTransaction.push(block);
+            var txs = block.txs;
+            txs.forEach( each => {
+                var decode = v1.decode(Buffer.from(each, 'base64'));
+                var account = decode.account
+                var address = decode.params.address
+                
+                console.log(decode);
+                
+                if (!accountForest[account]) { 
+                    accountForest[account] = new Array();
+                }
+                else {
+                    accountForest[account].push(decode);
+                }
+    
+                FirestoreAccount.doc(account).set({
+                    transaction: accountForest[account],
+                })
+                .then(() => {
+                    resolve("push Account to firebase SUCCESS");
+                })
+                .catch(err => {
+                    console.log("Firebase Error - " + err);
+                    reject("cannot push Account to firebase");
+                })
+                
+                if (address) {      
+                    if (!accountForest[address]) { 
+                        accountForest[address] = new Array();
+                    }
+                    else {
+                        accountForest[address].push(decode);
+                    } 
+                    FirestoreAccount.doc(address).set({
+                        transaction: accountForest[address],
+                    })
+                    .then(() => {
+                        resolve("push Account to firebase SUCCESS");
+                    })
+                    .catch(err => {
+                        console.log("Firebase Error - " + err);
+                        reject("cannot push Account to firebase");
+                    })
+                    console.log(decode.params.address);
+                    
+                }
+                
+            })
+            
+            
+            
+        }
+    })
+}
 
-function IntervalGetAllBlock() {
+// function IntervalGetAllBlock() {
+    // setInterval(() => {
+    //     if ( currentBlock < last_block_height && semaphore === 0 && currentBlock > 0 ) {
+    //         semaphore++;
+    //         console.log("CurrentBlock: " + currentBlock+ "- Semaphore: "+ semaphore + "- Block lenght: "  + blockchainTransaction.length);
+    //         var getAllBlock = "https://komodo.forest.network/block?height=" +currentBlock;
+    //         axios.get(getAllBlock)
+    //         .then((response) => {    
+    //             var block = {
+    //                 header: response.data.result.block.header,
+    //                 txs: response.data.result.block.data.txs ? response.data.result.block.data.txs: '0',
+    //             }
+    //             PushAccountToFirebase(block)
+    //             .then((response) => {
+    //                 console.log(response)
+    //                 currentBlock++;
+    //                 UpdateLastBlockAndCurrent2Firebase(last_block_height,currentBlock);
+    //                 semaphore--;
+    //             })
+    //             .catch(err => {
+    //                 console.log(err)
+    //                 currentBlock++;
+    //                 UpdateLastBlockAndCurrent2Firebase(last_block_height,currentBlock);
+    //                 semaphore--;
+    //             })
+    //         })
+    //         .catch(err => {
+    //             console.log("Axios Error -" + err);
+    //         })
+    //     }
+    // },3 *1000)
+
     setInterval(() => {
-        if ( numberBlocks < old_last_height && semaphore === 0) {
+        if ( accountCurrentBlock < accountLastBlock && semaphore === 0 && accountCurrentBlock > 0 ) {
             semaphore++;
-            console.log(numberBlocks+ " "+ semaphore);
-            var getAllBlock = "https://komodo.forest.network/block?height=" +numberBlocks;
+            console.log("CurrentBlock: " + accountCurrentBlock+ "- Semaphore: "+ semaphore );
+            var getAllBlock = "https://komodo.forest.network/block?height=" +accountCurrentBlock;
             axios.get(getAllBlock)
             .then((response) => {    
                 var block = {
                     header: response.data.result.block.header,
                     txs: response.data.result.block.data.txs ? response.data.result.block.data.txs: '0',
                 }
-                PushBlockToFirebase(block)
+                PushAccountToFirebase(block)
                 .then((response) => {
                     console.log(response)
-                    numberBlocks++;
+                    accountCurrentBlock++;
+                    // UpdateLastBlockAndCurrent2Firebase(last_block_height,currentBlock);
                     semaphore--;
                 })
                 .catch(err => {
                     console.log(err)
-                    numberBlocks++;
+                    accountCurrentBlock++;
+                    // UpdateLastBlockAndCurrent2Firebase(last_block_height,currentBlock);
                     semaphore--;
                 })
             })
@@ -90,9 +219,9 @@ function IntervalGetAllBlock() {
                 console.log("Axios Error -" + err);
             })
         }
-    },2 *1000)
-}
+    },3 *1000)
+// // }
 
-module.exports.IntervalGetHeightBlock = IntervalGetHeightBlock;
-module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
+// module.exports.IntervalGetHeightBlock = IntervalGetHeightBlock;
+// module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
 
