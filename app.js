@@ -17,7 +17,6 @@ var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 IntervalGetAccount();
 IntervalGetAllBlock();
 
-asyncBlock.IntervalGetHeightBlock();
 var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
