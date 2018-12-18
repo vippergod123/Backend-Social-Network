@@ -10,10 +10,9 @@ var createAccountRouter = require('./routes/create_account');
 var createPostRouter = require('./routes/create_post');
 var profileRouter = require('./routes/profile');
 var paymentRouter = require('./routes/payment');
+var blockTransactionRouter = require('./routes/block_transaction');
 
-var blockTransactionRouter = require('./test');
-//
-
+// var test = require('./test');
 
 var app = express();
 // view engine setup
@@ -32,7 +31,9 @@ app.use('/create_account', createAccountRouter);
 app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
-app.use('/block_transaction',blockTransactionRouter);
+app.use('/block_transaction',blockTransactionRouter)
+
+// test.IntervalGetHeightBlock();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

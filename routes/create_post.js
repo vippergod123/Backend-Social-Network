@@ -6,8 +6,6 @@ const base32 = require('base32.js');
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
 
-
-
 router.post('/', function (req, res, next) {
     var post = { type: 1, text: req.body.content, }
     var content = new Buffer.from(JSON.stringify(post));
@@ -27,9 +25,8 @@ router.post('/', function (req, res, next) {
             error: err
         })
     })
-    // res.status(200).json({
-    //     message: "post success",
-    // });
 });
+
+
 
 module.exports = router;
