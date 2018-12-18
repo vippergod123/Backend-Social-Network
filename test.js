@@ -44,9 +44,14 @@ function IntervalGetHeightBlock(){
     },2 * 1000)
 }
 
+var createAccountBlock = new Array();
+var paymentBlock = new Array();
+var postBlock = new Array();
+var updateBlock = new Array();
+
 function PushBlockToFirebase (block) {
     return new Promise((resolve, reject) => {     
-        if(block.num_txs === '0') {
+        if(block.header.num_txs === '0') {
             reject("txs is null");
         }
         else {
@@ -69,29 +74,30 @@ function PushBlockToFirebase (block) {
     })
 }
 
+var semaphore = 0;
+
 // function IntervalGetAllBlock() {
-    setInterval(()=> {
-        if ( numberBlocks < old_last_height) {
-            console.log(numberBlocks);
+    setInterval(() => {
+        if ( numberBlocks < old_last_height && semaphore === 0) {
+            semaphore++;
+            console.log(numberBlocks+ " "+ semaphore);
             var getAllBlock = "https://komodo.forest.network/block?height=" +numberBlocks;
             axios.get(getAllBlock)
             .then((response) => {    
                 var block = {
-                    chain_id: response.data.result.block.header.chain_id,
-                    height:response.data.result.block.header.height,
-                    time: response.data.result.block.header.time,
-                    num_txs: response.data.result.block.header.num_txs,
-                    total_txs: response.data.result.block.header.total_txs,
+                    header: response.data.result.block.header,
                     txs: response.data.result.block.data.txs ? response.data.result.block.data.txs: '0',
                 }
                 PushBlockToFirebase(block)
                 .then((response) => {
                     console.log(response)
                     numberBlocks++;
+                    semaphore--;
                 })
                 .catch(err => {
                     console.log(err)
                     numberBlocks++;
+                    semaphore--;
                 })
             })
             .catch(err => {
