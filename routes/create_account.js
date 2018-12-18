@@ -9,16 +9,12 @@ const handleTransaction = require('../lib/handleTransaction');
 router.post('/', function(req, res, next) {
   var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
 
-  handleTransaction.encodeCreateAccountTransaction(blockchainKey.public_key, req.query.public_key, blockchainKey.private_key)
-  .then((response) => { 
-    console.log(response);
+  handleTransaction.encodeCreateAccountTransaction(blockchainKey.public_key,req.query.public_key,blockchainKey.private_key)
+  .then((response)=>{ 
     axios.get(broadcastRequest+response).then((resp) => {
-      console.log(resp.data);
       handleTransaction.encodePaymentTransaction(blockchainKey.public_key, req.query.public_key, 100, blockchainKey.private_key)
-      .then((response) => {
-        console.log(response);
+      .then((response)=>{
         axios.get(broadcastRequest+response).then((resp)=>{
-          console.log(resp.data);
           res.status(200).json({
             message: "create success",
           })
@@ -32,7 +28,7 @@ router.post('/', function(req, res, next) {
       error: err
     })
   })
-   
+
 });
 
 module.exports = router;
