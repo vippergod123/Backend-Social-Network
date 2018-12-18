@@ -13,7 +13,7 @@ var paymentRouter = require('./routes/payment');
 var asyncBlock = require('./lib/AsyncBlock');
 
 asyncBlock.IntervalGetAllBlock();
-
+asyncBlock.IntervalGetHeightBlock();
 var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
