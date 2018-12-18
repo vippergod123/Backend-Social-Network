@@ -23,73 +23,84 @@ const decodeTransaction = (data) => {
     var transaction = v1.decode(Buffer.from(data, 'base64'));
     return transaction;
 }
-var old_last_height = 400;
+var old_last_height = 20000;
 var numberBlocks = 1;
 
-
-setInterval( () => { 
-    var getLastHeightBlock = "https://komodo.forest.network/abci_info"
-    axios.get(getLastHeightBlock)
-    .then((response) => {
-        var new_last_height = response.data.result.response.last_block_height;
-        if (new_last_height > old_last_height) {
-            old_last_height = new_last_height;
-            console.log(old_last_height);
-        }
-    })
-    .catch(err => {
-        console.log("Last Block Error - " +err);
-    })
-    
-},2 * 1000)
-
-
-setInterval(()=> {
-    if ( numberBlocks < old_last_height) {
-        console.log(numberBlocks);
-        var getAllBlock = "https://komodo.forest.network/block?height=" +numberBlocks;
-        axios.get(getAllBlock)
+function IntervalGetHeightBlock(){
+    setInterval( () => { 
+        var getLastHeightBlock = "https://komodo.forest.network/abci_info"
+        axios.get(getLastHeightBlock)
         .then((response) => {
-
-            var txs = response.data.result.block.data.txs;
-            if (txs) {
-                txs.forEach(each => {
-                    
-                    var transaction = v1.decode(Buffer.from(each, 'base64'));
-                    
-                    console.log(transaction);
-                
-                    const sampleData = firestore.collection("Block")
-                    sampleData.doc(transaction.operation).collection(transaction.account).doc().set({
-                        transaction: transaction,
-                    })
-                    .then(() => {
-                        numberBlocks++; 
-                        console.log(123);
-                    })
-                    .catch(err => {
-                        console.log("Firebase Error - " + err);
-                    })
-                    
-                });   
-            
-            } else {
-                numberBlocks++; 
+            var new_last_height = response.data.result.response.last_block_height;
+            if (new_last_height > old_last_height) {
+                old_last_height = new_last_height;
+                console.log(old_last_height);
             }
         })
         .catch(err => {
-            console.log("Axios Error -" + err);
+            console.log("Last Block Error - " +err);
         })
-    }
-},2 *1000)
+        
+    },2 * 1000)
+}
 
+function PushBlockToFirebase (block) {
+    return new Promise((resolve, reject) => {     
+        if(block.num_txs === '0') {
+            reject("txs is null");
+        }
+        else {
+            block.txs.forEach(each => {
+                var transaction = v1.decode(Buffer.from(each, 'base64'));
+                console.log(transaction);
+                const sampleData = firestore.collection("Block_Dat")
+                sampleData.doc(transaction.operation).set({
+                    block: block,
+                })
+                .then(() => {
+                    resolve("push to firebase success");
+                })
+                .catch(err => {
+                    console.log("Firebase Error - " + err);
+                    reject("cannot push to firebase");
+                })
+            });
+        }
+    })
+}
 
-//  const sampleData = firestore.collection("Block")
-// sampleData.doc("sample").collection("account").doc().set({
-//     transaction: "Transaction"
-// })
-// .then(() => {
-    
-//     console.log(123);
-// })
+// function IntervalGetAllBlock() {
+    setInterval(()=> {
+        if ( numberBlocks < old_last_height) {
+            console.log(numberBlocks);
+            var getAllBlock = "https://komodo.forest.network/block?height=" +numberBlocks;
+            axios.get(getAllBlock)
+            .then((response) => {    
+                var block = {
+                    chain_id: response.data.result.block.header.chain_id,
+                    height:response.data.result.block.header.height,
+                    time: response.data.result.block.header.time,
+                    num_txs: response.data.result.block.header.num_txs,
+                    total_txs: response.data.result.block.header.total_txs,
+                    txs: response.data.result.block.data.txs ? response.data.result.block.data.txs: '0',
+                }
+                PushBlockToFirebase(block)
+                .then((response) => {
+                    console.log(response)
+                    numberBlocks++;
+                })
+                .catch(err => {
+                    console.log(err)
+                    numberBlocks++;
+                })
+            })
+            .catch(err => {
+                console.log("Axios Error -" + err);
+            })
+        }
+    },2 *1000)
+// }
+
+module.exports.IntervalGetHeightBlock = IntervalGetHeightBlock;
+// module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
 
