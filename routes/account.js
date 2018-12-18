@@ -88,7 +88,7 @@ const RESERVE_RATIO = 1;
 const MAX_CELLULOSE = Number.MAX_SAFE_INTEGER;
 const NETWORK_BANDWIDTH = RESERVE_RATIO * MAX_BLOCK_SIZE * BANDWIDTH_PERIOD;
 
-const bandwidthLimit = account.balance / MAX_CELLULOSE * NETWORK_BANDWIDTH;
+// const bandwidthLimit = account.balance / MAX_CELLULOSE * NETWORK_BANDWIDTH;
 // 10 * 86400 - /
 router.post('/calculate_energy', function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
