@@ -14,8 +14,8 @@ var paymentRouter = require('./routes/payment');
 var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
 var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 
-// IntervalGetAccount();
-IntervalGetAllBlock();
+IntervalGetAccount();
+// IntervalGetAllBlock();
 
 var app = express();
 // view engine setup
