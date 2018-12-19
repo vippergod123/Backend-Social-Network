@@ -121,23 +121,26 @@ router.post('/calculate_energy', function(req, res, next) {
             var diff = response[0].time;
             var bandwidthLimit = 0;
             var bandwidth = 0;
-            var energyrecover = 0;
+            var energyrecovery = 0;
             for(let i = 2; i<response.length; i++) {
                 diff = response[i].time - response[i-1].time;
-                bandwidthLimit = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
-                bandwidth = Math.ceil(Math.max(0, (BANDWIDTH_PERIOD - diff) / BANDWIDTH_PERIOD) * response[i].amount + response[i].tx.length);          
-                energyrecover = diff * response[i-1].amount  / BANDWIDTH_PERIOD;
-                if(diff >= BANDWIDTH_PERIOD)
-                    response[i].energy = bandwidthLimit;
-            
+                bandwidthLimitprev = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
+                bandwidthLimit = Math.ceil(response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
+                bandwidth = Math.ceil(response[i].tx.length);          
+                energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
+                console.log(diff + ' ' + bandwidth + " " +  response[i-1].energy + " " + energyrecovery);
+                response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
                 if(response[i].account === req.body.public_key) {
-                    response[i].energy = 0;
+                    response[i].energy -= bandwidth;
                 } else {
-                    response[i].energy = response[i-1].energy+energyrecover>=bandwidthLimit?bandwidthLimit:response[i-1].energy+energyrecover;
+                    response[i].energy = response[i-1].energy+energyrecovery>=bandwidthLimit?bandwidthLimit:response[i-1].energy+energyrecovery;
                 }
+                console.log(i + ": " + response[i].energy);
             } 
-            
-            console.log(bandwidthLimit);
+            energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
+            console.log(now + ' ' + response[response.length-1].time + " " +  bandwidthLimit + " " + energyrecovery);
+            var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
+            console.log(energy);
             res.status(200).json({
                 message: 'calculate energy success',
                 status: 200,
