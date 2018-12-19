@@ -11,7 +11,11 @@ var createPostRouter = require('./routes/create_post');
 var profileRouter = require('./routes/profile');
 var paymentRouter = require('./routes/payment');
 
-var test = require('./test');
+var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
+var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
+
+// IntervalGetAccount();
+IntervalGetAllBlock();
 
 var app = express();
 // view engine setup
@@ -31,7 +35,7 @@ app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
 
-test.IntervalGetHeightBlock();
+// test.IntervalGetHeightBlock();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
