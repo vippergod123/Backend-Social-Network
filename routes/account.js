@@ -116,18 +116,24 @@ router.post('/calculate_energy', function(req, res, next) {
         SetAmountForBlock(data, req.body.public_key);
         SetTimeForBlock(data)
         .then((response)=>{
-            var energy = 0;
+            response[0].energy = 0;
+            response[1].energy = Math.ceil(response[1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
             var diff = response[0].time;
             var bandwidthLimit = 0;
             var bandwidth = 0;
-            for(let i = 0; i<response.length; i++) {
+            var energyrecover = 0;
+            for(let i = 2; i<response.length; i++) {
+                diff = response[i].time - response[i-1].time;
+                bandwidthLimit = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
+                bandwidth = Math.ceil(Math.max(0, (BANDWIDTH_PERIOD - diff) / BANDWIDTH_PERIOD) * response[i].amount + response[i].tx.length);          
+                energyrecover = diff * response[i-1].amount  / BANDWIDTH_PERIOD;
+                if(diff >= BANDWIDTH_PERIOD)
+                    response[i].energy = bandwidthLimit;
+            
                 if(response[i].account === req.body.public_key) {
-                    diff = response[i].time - response[i-1].time;
-                    bandwidthLimit = response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE;
-                    bandwidth = Math.ceil(Math.max(0, (BANDWIDTH_PERIOD - diff) / BANDWIDTH_PERIOD) * response.amount + response[i].tx.length);
-                    energy = bandwidthLimit - bandwidth;
-                    energy += bandwidthLimit / BANDWIDTH_PERIOD;
-                    response[i].energy = energy;
+                    response[i].energy = 0;
+                } else {
+                    response[i].energy = response[i-1].energy+energyrecover>=bandwidthLimit?bandwidthLimit:response[i-1].energy+energyrecover;
                 }
             } 
             
