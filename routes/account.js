@@ -128,16 +128,15 @@ router.post('/calculate_energy', function(req, res, next) {
                 bandwidthLimit = Math.ceil(response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
                 bandwidth = Math.ceil(response[i].tx.length);          
                 energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
-                console.log(diff + ' ' + bandwidth + " " +  response[i-1].energy + " " + energyrecovery);
                 response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
                 if(response[i].account === req.body.public_key) {
                     response[i].energy -= bandwidth;
                 } else {
                     response[i].energy = response[i-1].energy+energyrecovery>=bandwidthLimit?bandwidthLimit:response[i-1].energy+energyrecovery;
                 }
+                console.log(diff + ' ' + bandwidth + " " +  response[i].energy + " " + energyrecovery);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
-            console.log(now + ' ' + response[response.length-1].time + " " +  bandwidthLimit + " " + energyrecovery);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
             console.log(energy);
             res.status(200).json({
