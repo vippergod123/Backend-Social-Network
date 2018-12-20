@@ -135,7 +135,6 @@ router.post('/calculate_energy', function(req, res, next) {
                 } else {
                     response[i].energy = response[i-1].energy+energyrecovery>=bandwidthLimit?bandwidthLimit:response[i-1].energy+energyrecovery;
                 }
-                console.log(i + ": " + response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             console.log(now + ' ' + response[response.length-1].time + " " +  bandwidthLimit + " " + energyrecovery);
@@ -144,7 +143,8 @@ router.post('/calculate_energy', function(req, res, next) {
             res.status(200).json({
                 message: 'calculate energy success',
                 status: 200,
-                data: response,
+                energy: energy,
+                data: response,                
             })
         })
     })

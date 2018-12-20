@@ -37,8 +37,19 @@ const PostParams = vstruct([
   { name: 'keys', type: vstruct.VarArray(vstruct.UInt8, EncryptionKey) }
 ]);
 
+
 const UpdateAccountParams = vstruct([
-  { name: 'name', type: vstruct.VarString(vstruct.UInt8) },
+  { name: 'key', type: vstruct.VarString(vstruct.UInt8) },
+  { name: 'value', type: vstruct.VarBuffer(vstruct.UInt16BE) },
+]);
+
+const InteractParams = vstruct([
+  // Post or comment (or something else?)
+  { name: 'object', type: vstruct.Buffer(32) },
+  // Encrypt with same post key (if any)
+  // Depend on object on parent object keys. First 16 bytes of content are nonce/iv
+  { name: 'content', type: vstruct.VarBuffer(vstruct.UInt16BE) },
+  // React if '', like, love, haha, anrgy, sad, wow
 ]);
 
 function encode(tx) {

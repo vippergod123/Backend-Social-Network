@@ -3,22 +3,24 @@ var router = express.Router();
 const axios = require('axios');
 
 const handleTransaction = require('../lib/handleTransaction');
-/* GET users listing. */
+const blockchainKey = require('../config/blockchainKey');
 
 router.post('/', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
 
-    handleTransaction.encodePaymentTransaction(req.body.send_public_key, req.body.receive_public_key, req.body.amount, req.body.send_private_key)
+    var UpdateNameParams =  Buffer.from(JSON.stringify(req.body.name));
+
+    handleTransaction.encodeUpdateAccountTransaction(blockchainKey.public_key, UpdateNameParams, blockchainKey.private_key)
     .then((response)=>{
     axios.get(broadcastRequest+response).then((resp)=>{
         res.status(200).json({
-        message: "create success",
+            message: "update success",
         })
     })
     })
     .catch((err) => {
         res.status(400).json({
-        message: err
+            message: err
         })
     })
 
