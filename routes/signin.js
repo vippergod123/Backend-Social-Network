@@ -5,25 +5,10 @@ var Passport = require("passport")
 // Middleware
 const {isLoggedin} = require('../Global/Function/middleware');
 
-
-router.get('/', function(req, res) {
-    return res.redirect("http://localhost:3001")
-});
-
-// router.post('/', Passport.authenticate('local', {
-//   // failureRedirect: '/loginFailed',
-//   successRedirect: '/login_success',
-//   // successRedirect: '/loggedin',
-//   failureRedirect: '/login_failed', // see text
-
-// }));
-
-
-
-  router.post('/', function(req, res, next) {
-    /* look at the 2nd parameter to the below call */
+router.post('/', function(req, res, next) {
+/* look at the 2nd parameter to the below call */
     Passport.authenticate('local', function(err, user, info) {
-        
+    
         var isValid = false
         isValid = user?true:false
         isValid = err?false:true
@@ -45,9 +30,9 @@ router.get('/', function(req, res) {
             })
             
         }
-    
+
     })(req, res, next);
-  });
+});
 
 
 
