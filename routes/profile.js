@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const transaction = require('../lib/handleTransaction');
+const buf = require("buffer")
 
 function isJson(str) {
   try {
@@ -20,7 +21,7 @@ router.post('/', function(req, res, next) {
       each.tx = transaction.decodeTransaction(each.tx);
       each.tx.memo = each.tx.memo.toString();
       each.tx.signature = each.tx.signature.toString('hex');
-      if(each.tx.params.content) {
+      if(each.tx.params.content) {    
         const content = each.tx.params.content.toString();
         if(isJson(content))
           each.tx.params.content = JSON.parse(content);

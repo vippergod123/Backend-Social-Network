@@ -50,7 +50,7 @@ router.post('/', function(req, res, next) {
         })
         const sequence = FindSequenceAvailable(data, req.body.public_key);
         var displayName = "Account";
-        var picture = "a";
+        var picture = null;
         var followings;
         var count = 3;
         var temp = [1, 1, 1];
