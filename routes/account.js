@@ -67,29 +67,30 @@ router.post('/', function(req, res, next) {
             }
             if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
                 const value = block.tx.params.value.toString();
-                // isJson(value) ? followings = JSON.parse(value) : followings = value;
-                if(isJson(value)) {
-                    followings = JSON.parse(value); 
-                } else {
-                    followings = value;
-                }
+                isJson(value) ? followings = JSON.parse(value) : followings = value;
                 count--;
                 temp[2]--;
             }
             if(count === 0)
                 break;
         }
-
-        res.status(200).json({
-            message: 'calculate success',
-            status: 200,
-            displayName: displayName,
-            followings: followings,
-            amount: CalculateAmount(data, req.body.public_key),
-            sequence: sequence,
-            picture: picture,
-            
-        });
+        console.log(response.data)
+        if(response.data.result.txs.length > 0) {
+            res.status(200).json({
+                message: 'get account success',
+                status: 200,
+                displayName: displayName,
+                followings: followings,
+                amount: CalculateAmount(data, req.body.public_key),
+                sequence: sequence,
+                picture: picture,
+            });
+        } else {
+            res.status(201).json({
+                message: 'get account falied',
+                status: 201,
+            });
+        }
     })
     .catch(error => {
         console.log(error);
@@ -156,6 +157,12 @@ router.post('/calculate_energy', function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
     .then((response) => {
+        if (response.data.result.txs.length <= 0) {
+            res.status(201).json({
+                message: 'calculate energy failed',
+                status: 201,
+            })
+        }
         const now = moment(Date.now()).unix();
         const data = response.data.result.txs;
         SetAmountForBlock(data, req.body.public_key);
@@ -174,8 +181,12 @@ router.post('/calculate_energy', function(req, res, next) {
                 bandwidth = Math.ceil((response[i].tx.length*3/4));          
                 energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
                 response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
-                if(response[i].account === req.body.public_key) {
+                if (response[i].account === req.body.public_key) {
                     response[i].energy -= bandwidth;
+                }
+                const tx = transaction.decodeTransaction(response[i].tx);
+                if (tx.operation === "payment") {
+                    response[i].energy = bandwidthLimit;
                 }
                 console.log(diff + ' ' + bandwidth + " " +  response[i].energy + " " + energyrecovery);
             } 

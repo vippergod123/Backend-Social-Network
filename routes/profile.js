@@ -35,7 +35,7 @@ router.post('/', function(req, res, next) {
         each.tx.params.value = each.tx.params.value.toString('base64');
       }
       if(each.tx.params.value && each.tx.params.key === 'followings') { 
-        const value = each.tx.params.value.toString();
+        const value = each.tx.params.value.toString('hex');
         if(isJson(value)) {
           each.tx.params.value = JSON.parse(value)
         } else {
