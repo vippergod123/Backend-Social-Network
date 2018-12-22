@@ -1,7 +1,6 @@
-const v1 = require('./function/transaction/v1');
+const v1 = require('./Global/Function/transaction/v1');
 const axios = require('axios');
 var express = require('express');
-var router = express.Router();
 const {firestore} = require('./config/firebaseConfig');
 
 
@@ -9,11 +8,6 @@ const Block_Dat = firestore.collection("Block_Dat")
 const FirestoreAccount = firestore.collection("Account")
 
 var last_block_height = 20000;
-var currentBlock = -1;
-var createAccountBlock = new Array();
-var paymentBlock = new Array();
-var postBlock = new Array();
-var updateBlock = new Array();
 var blockchainTransaction = new Array();
 var semaphore = 0;
 

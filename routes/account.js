@@ -5,6 +5,7 @@ const transaction = require('../lib/handleTransaction');
 
 const blockchainKey = require('../config/blockchainKey');
 const Domain = require('../config/nodePublic');
+const {isLoggedin} = require('../Global/Function/middleware');
 
 function calculateAmount(data, public_key) {
     let amount = 0;
@@ -21,7 +22,7 @@ function calculateAmount(data, public_key) {
     return amount;
 }
 
-router.post('/calculate_amount', function(req, res, next) {
+router.post('/calculate_amount',isLoggedin, function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
     .then((response) => {
