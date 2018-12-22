@@ -40,9 +40,7 @@ router.post('/', function(req, res, next) {
         } else {
           each.tx.params.value = value;
         }
-
       }
-
       return each;
     })
     res.status(200).json({

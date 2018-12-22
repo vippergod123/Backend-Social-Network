@@ -4,7 +4,6 @@ const axios = require('axios');
 const transaction = require('../lib/handleTransaction');
 const moment  = require('moment');
 
-const blockchainKey = require('../config/blockchainKey');
 const Domain = require('../config/nodePublic');
 
 function CalculateAmount(data, public_key) {
@@ -28,6 +27,17 @@ function FindSequenceAvailable(data, public_key) {
     return 1;
 }
 
+
+function isJson(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+  }
+  
+
 router.post('/', function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
@@ -38,12 +48,47 @@ router.post('/', function(req, res, next) {
             each.tx.signature = each.tx.signature.toString('hex');
             return each;
         })
+        const sequence = FindSequenceAvailable(data, req.body.public_key);
+        var displayName = "Account";
+        var picture = "a";
+        var followings;
+        var count = 3;
+        var temp = [1, 1, 1];
+        for(const block of data) {
+            if(block.tx.operation === "update_account" && block.tx.params.key === "name" && temp[0] === 1) {
+                displayName = block.tx.params.value.toString();
+                count--;
+                temp[0]--;
+            }
+            if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) {
+                picture = block.tx.params.value.toString('base64');
+                count--;
+                temp[1]--;
+            }
+            if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
+                const value = block.tx.params.value.toString();
+                // isJson(value) ? followings = JSON.parse(value) : followings = value;
+                if(isJson(value)) {
+                    followings = JSON.parse(value); 
+                } else {
+                    followings = value;
+                }
+                count--;
+                temp[2]--;
+            }
+            if(count === 0)
+                break;
+        }
+
         res.status(200).json({
             message: 'calculate success',
             status: 200,
+            displayName: displayName,
+            followings: followings,
             amount: CalculateAmount(data, req.body.public_key),
-            sequence: FindSequenceAvailable(data, req.body.public_key),
-            data: data,
+            sequence: sequence,
+            picture: picture,
+            
         });
     })
     .catch(error => {
