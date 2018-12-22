@@ -20,14 +20,20 @@ router.post('/', function(req, res, next) {
       each.tx = transaction.decodeTransaction(each.tx);
       each.tx.memo = each.tx.memo.toString();
       each.tx.signature = each.tx.signature.toString('hex');
-      if(each.tx.params.content)
-      {
+      if(each.tx.params.content) {
         const content = each.tx.params.content.toString();
         if(isJson(content))
           each.tx.params.content = JSON.parse(content);
         else
           each.tx.params.content = content;
       }
+      if(each.tx.params.value && each.tx.params.key === 'name') { 
+        each.tx.params.value = each.tx.params.value.toString();
+      }
+      if(each.tx.params.value && each.tx.params.key === 'followings') { 
+        each.tx.params.value = each.tx.params.value.toString();
+      }
+
       return each;
     })
     res.status(200).json({

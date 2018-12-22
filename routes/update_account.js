@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const fs = require('fs');
 const window = require('window');
-var Base64 = require('js-base64').Base64;
+const Base64 = require('js-base64').Base64;
 
 const handleTransaction = require('../lib/handleTransaction');
 const blockchainKey = require('../config/blockchainKey');
@@ -10,8 +11,8 @@ const blockchainKey = require('../config/blockchainKey');
 router.post('/update_name', function(req, res, next) {
     var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
     var updateNameParams = new Buffer.from(req.body.name);
-    handleTransaction.encodeUpdateAccountTransaction(blockchainKey.public_key, "name", updateNameParams, blockchainKey.private_key)
-    .then((response)=>{
+    handleTransaction.encodeUpdateNameTransaction(blockchainKey.public_key, updateNameParams, blockchainKey.private_key)
+    .then((response) => {
         axios.get(broadcastRequest+response).then((resp)=>{
             res.status(200).json({
                 message: "update name success",
@@ -38,12 +39,21 @@ function convertBase64ToBinary(input) {
 }
 
 router.post('/update_picture', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
-    var picture = req.body.picture;
-    var updateParams = new Buffer.from(convertBase64ToBinary(picture));
-    handleTransaction.encodeUpdateAccountTransaction(blockchainKey.public_key, "picture", updateParams, blockchainKey.private_key)
-    .then((response)=>{
-        axios.get(broadcastRequest+response).then((resp)=>{
+    var broadcastRequest = "https://komodo.forest.network/";
+    var picture = fs.readFileSync('./routes/cap.jpg');
+    var updateParams = new Buffer.from(picture);
+
+    handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key, updateParams, blockchainKey.private_key)
+    .then((response) => {
+        // console.log(response);
+        axios.post(broadcastRequest, { 
+            "method": "broadcast_tx_commit",
+            "jsonrpc": "2.0",
+            "params":  [  `${response}` ],
+            "id": ""
+        })
+        .then((resp)=>{
+            console.log(resp.data);
             res.status(200).json({
                 message: "update piture success",
             })
