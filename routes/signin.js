@@ -4,7 +4,7 @@ var Passport = require("passport")
 
 
 router.get('/', function(req, res) {
-    res.redirect("http://localhost:3001")
+    return res.redirect("http://localhost:3001")
 });
 
 // router.post('/', Passport.authenticate('local', {
@@ -29,19 +29,20 @@ router.get('/', function(req, res) {
             isValid= user?true:false
         })
         if (isValid) { 
-            res.json({
+            return res.status(200).json({
                 message: "Login Success!",
                 redirect: "/",
             })
-           
+            
         }
         else { 
-            res.json({
+            return res.json({
                 error: "Invalid public key",
                 redirect: "/signin",
             })
-            res.end();
+            
         }
+    
     })(req, res, next);
   });
 

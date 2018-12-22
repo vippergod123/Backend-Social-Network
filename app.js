@@ -40,10 +40,10 @@ app.use(bodyParser.urlencoded({
 }));
 
 //Use authentication passport  and sessions
-var flash = require('connect-flash');
+// var flash = require('connect-flash');
 var Passport = require("./models/Passport");
 
-app.use(flash());
+// app.use(flash());
 app.use(Passport.initialize());
 app.use(Passport.session())
 

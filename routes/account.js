@@ -21,8 +21,23 @@ function calculateAmount(data, public_key) {
     }
     return amount;
 }
+function isLoggedinA(req, res, next) {
 
-router.post('/calculate_amount',isLoggedin, function(req, res, next) {
+    if (!req.user) {
+      res.json({
+        error: "You not sign in yet!",
+        redirect: "/signin",
+      })
+    }  
+    else {
+      return next()
+    }
+    
+ }
+
+router.post('/calculate_amount',isLoggedinA, function(req, res, next) {
+    console.log(req.user.public_key);
+    
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
     .then((response) => {

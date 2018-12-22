@@ -6,33 +6,28 @@ var crypto = require('crypto-js')
 const {firestore} = require('../config/firebaseConfig');
 const FirestoreAccount = firestore.collection("Account");
 
-var accountForest = new Object();
-FirestoreAccount.get().then((snapshot) => { 
-    snapshot.forEach(doc => {
-        
-        if ( doc.id !== "AccountStatus") {
-            var data = JSON.parse(doc.data().transaction)
-            accountForest[doc.id] = data;
-        }
-
-    });
-
-    console.log("Fetch Data from database success");
-    
-}).catch(err => {
-    console.log("Error when fetching Data from database");
-})
 
 //sua
 Passport.use(new LocalStrategy(
   (username, password, done) => {
-    var accounts = Object.keys(accountForest);    
-    var exist = accounts.find(each => each === username)
-
-    if ( exist) 
-        return done(null,exist)
-    else  
+    // var accounts = Object.keys(accountForest);    
+    // var exist = accounts.find(each => each === username)
+    FirestoreAccount.doc(username).get().then((snapshot) => {
+        var exist = snapshot.data();
+        if ( exist) 
+            return done(null,username = { 
+                public_key: username,
+                transaction: exist.transaction
+            })
+        else  
+            return done(null,false)
+    })
+    .catch(err=> { 
+        
+        console.log(err);
         return done(null,false)
+    })
+   
   }
 )) // MongoClient
 
@@ -69,8 +64,8 @@ Passport.deserializeUser((id,done) => {
 //     }
 //     db.close();
 //   });
-    console.log(id);
 
+    done(null,id)
 });
 
 
