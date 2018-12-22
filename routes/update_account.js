@@ -3,7 +3,6 @@ const router = express.Router();
 const axios = require('axios');
 const fs = require('fs');
 var request = require('request');
-const Base64 = require('js-base64').Base64;
 
 const handleTransaction = require('../lib/handleTransaction');
 const blockchainKey = require('../config/blockchainKey');
@@ -72,21 +71,22 @@ router.post('/update_picture', function(req, res, next) {
 
 router.post('/update_followings', function(req, res, next) {
     var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
-    var follwing= {
-            addresses: [
-                "GBFNM2W3QNSPR4KGY4FNEF6YUF7STM5LF5VOARFCCQCSLPZMSEQTZ4MU",
-                "GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD",
-            ]
-        }
 
+    var f1 = new Buffer.from("GBFNM2W3QNSPR4KGY4FNEF6YUF7STM5LF5VOARFCCQCSLPZMSEQTZ4MU");
+    var f2 = new Buffer.from("GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD");
+    var follwing= {
+            addresses: [ f1,f2, ]
+        }
     var Followings = new Buffer.from(JSON.stringify(follwing));
+    console.log(JSON.parse(Followings));
+
     handleTransaction.encodeUpdateFollowingsTransaction(blockchainKey.public_key, Followings, blockchainKey.private_key)
     .then((response) => {
-        axios.get(broadcastRequest+response).then((resp)=>{
-            res.status(200).json({
-                message: "update followings success",
-            })
-        })
+        // axios.get(broadcastRequest+response).then((resp)=>{
+        //     res.status(200).json({
+        //         message: "update followings success",
+        //     })
+        // })
     })
     .catch((err) => {
         res.status(400).json({

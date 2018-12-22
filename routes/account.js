@@ -67,7 +67,7 @@ router.post('/', function(req, res, next) {
             }
             if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
                 const value = block.tx.params.value.toString();
-                isJson(value) ? followings = JSON.parse(value) : followings = value;
+                isJson(value) ? followings = JSON.parse(value) : followings = value; //////////////////////////////////////////////////
                 count--;
                 temp[2]--;
             }

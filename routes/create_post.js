@@ -12,7 +12,6 @@ router.post('/', function (req, res, next) {
             text: req.body.content, 
         }
     var content = new Buffer.from(JSON.stringify(post));
-    console.log(JSON.stringify(post));
     var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
     handleTransaction.encodePostTransaction(blockchainKey.public_key, content, blockchainKey.private_key)
     .then((response) => {
