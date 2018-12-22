@@ -2,6 +2,9 @@ var express = require("express")
 var router = express.Router()
 var Passport = require("passport")
 
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
+
 
 router.get('/', function(req, res) {
     return res.redirect("http://localhost:3001")

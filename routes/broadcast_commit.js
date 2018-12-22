@@ -1,9 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const axios = require('axios');
 const Domain = require('../config/nodePublic');
 
-router.post('/', function(req, res, next) {
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
+
+router.post('/', isLoggedin, function(req, res, next) {
   var broadcastRequest = Domain.komodoDomain + "broadcast_tx_commit?tx=" + req.body.enCodeTransaction;
   axios.get(broadcastRequest)
     .then((response) => {

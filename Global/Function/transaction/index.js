@@ -22,7 +22,6 @@ function decode(data) {
   switch (versionTx.version) {
     case 1:
       return v1.decode(data);
-      break;
     
     default:
       throw Error('Unsupport version');
@@ -41,7 +40,7 @@ function getUnsignedHash(tx) {
 
 function sign(tx, secret) {
   const key = Keypair.fromSecret(secret);
-  
+  tx.account = key.publicKey();
   tx.signature = key.sign(getUnsignedHash(tx));
 }
 
@@ -54,7 +53,6 @@ function hash(tx) {
   return tx.hash = crypto.createHash('sha256')
     .update(encode(tx))
     .digest()
-    .slice(0, 20)
     .toString('hex')
     .toUpperCase();
 }

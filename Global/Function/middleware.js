@@ -1,6 +1,4 @@
-function isLoggedin(req, res, next) {
-    console.log(req.user);
-  
+function isLoggedin(req, res, next) {  
     if (!req.user) {
       res.json({
         error: "You not sign in yet!",
@@ -9,7 +7,7 @@ function isLoggedin(req, res, next) {
     }  
     else {
       return next()
-    }
+    }  
     
  }
 

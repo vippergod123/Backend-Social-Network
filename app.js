@@ -13,11 +13,13 @@ var createPostRouter = require('./routes/create_post');
 var profileRouter = require('./routes/profile');
 var signinRouter = require('./routes/signin');
 var paymentRouter = require('./routes/payment');
+var updateAccountRouter = require('./routes/update_account');
 
+// var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
+// var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 
-var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
-var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
-
+// IntervalGetAccount();
+// IntervalGetAllBlock();
 
 var app = express();
 
@@ -60,12 +62,7 @@ app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
 app.use('/signin',signinRouter);
-
-// Interval Function 
-
-  // IntervalGetAccount();
-  // IntervalGetAllBlock();
-
+app.use('/update_account', updateAccountRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,12 +1,15 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const axios = require('axios');
 const base32 = require('base32.js');
 
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
 
-router.post('/', function (req, res, next) {
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
+
+router.post('/',isLoggedin, function (req, res, next) {
     var post = { type: 1, text: req.body.content, }
     var content = new Buffer.from(JSON.stringify(post));
     console.log(JSON.stringify(post));
