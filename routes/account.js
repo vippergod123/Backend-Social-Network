@@ -122,17 +122,15 @@ router.post('/calculate_energy', function(req, res, next) {
             var bandwidthLimit = 0;
             var bandwidth = 0;
             var energyrecovery = 0;
-            for(let i = 2; i<response.length; i++) {
+            for(let i = 2; i < response.length; i++) {
                 diff = response[i].time - response[i-1].time;
                 bandwidthLimitprev = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
                 bandwidthLimit = Math.ceil(response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
-                bandwidth = Math.ceil(response[i].tx.length);          
+                bandwidth = Math.ceil((response[i].tx.length*3/4));          
                 energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
                 response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
                 if(response[i].account === req.body.public_key) {
                     response[i].energy -= bandwidth;
-                } else {
-                    response[i].energy = response[i-1].energy+energyrecovery>=bandwidthLimit?bandwidthLimit:response[i-1].energy+energyrecovery;
                 }
                 console.log(diff + ' ' + bandwidth + " " +  response[i].energy + " " + energyrecovery);
             } 
@@ -143,7 +141,7 @@ router.post('/calculate_energy', function(req, res, next) {
                 message: 'calculate energy success',
                 status: 200,
                 energy: energy,
-                data: response,                
+                data: response,
             })
         })
     })

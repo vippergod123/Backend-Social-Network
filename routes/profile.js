@@ -30,8 +30,8 @@ router.post('/', function(req, res, next) {
       if(each.tx.params.value && each.tx.params.key === 'name') { 
         each.tx.params.value = each.tx.params.value.toString();
       }
-      if(each.tx.params.value && each.tx.params.key === 'followings') { 
-        each.tx.params.value = each.tx.params.value.toString();
+      if(each.tx.params.value && each.tx.params.key === 'picture') { 
+        each.tx.params.value = each.tx.params.value.toString('base64');
       }
 
       return each;
