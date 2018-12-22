@@ -27,20 +27,8 @@ router.post('/update_name', function(req, res, next) {
 
 });
 
-function convertBase64ToBinary(input) {
-    var raw = input;
-    var rawLength = input.length;
-    var array = new Uint8Array(new ArrayBuffer(rawLength));
-  
-    for(i = 0; i < rawLength; i++) {
-      array[i] = raw.charCodeAt(i);
-    }
-    return array;
-}
-
 router.post('/update_picture', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit";
-    var picture = fs.readFileSync('./routes/images.jpg');
+    var picture = fs.readFileSync('./routes/cap.jpg');
     var updateParams = new Buffer.from(picture);
 
     handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key, updateParams, blockchainKey.private_key)
@@ -62,7 +50,8 @@ router.post('/update_picture', function(req, res, next) {
             })
         };
         request(option, (error, response) => {
-            if(response.body.result.height != "0") {
+            var body = JSON.parse(response.body);
+            if(body.result.height != "0") {
                 res.status(200).json({
                     message: "update piture success",
                 })
@@ -79,6 +68,32 @@ router.post('/update_picture', function(req, res, next) {
             message: err
         })
     })
+});
+
+router.post('/update_followings', function(req, res, next) {
+    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
+    var follwing= {
+            addresses: [
+                "GBFNM2W3QNSPR4KGY4FNEF6YUF7STM5LF5VOARFCCQCSLPZMSEQTZ4MU",
+                "GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD",
+            ]
+        }
+
+    var Followings = new Buffer.from(JSON.stringify(follwing));
+    handleTransaction.encodeUpdateFollowingsTransaction(blockchainKey.public_key, Followings, blockchainKey.private_key)
+    .then((response) => {
+        axios.get(broadcastRequest+response).then((resp)=>{
+            res.status(200).json({
+                message: "update followings success",
+            })
+        })
+    })
+    .catch((err) => {
+        res.status(400).json({
+            message: err
+        })
+    })
+
 });
 
 module.exports = router;

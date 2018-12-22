@@ -14,7 +14,7 @@ router.post('/', function (req, res, next) {
     handleTransaction.encodePostTransaction(blockchainKey.public_key, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
-            console.log(resp);
+            console.log(resp.data);
             res.status(200).json({
                 message: "post success",
             })
