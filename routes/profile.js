@@ -36,7 +36,14 @@ router.post('/',isLoggedin, function(req, res, next) {
       if(each.tx.params.value && each.tx.params.key === 'picture') { 
         each.tx.params.value = each.tx.params.value.toString('base64');
       }
-
+      if(each.tx.params.value && each.tx.params.key === 'followings') { 
+        const value = each.tx.params.value.toString();
+        if(isJson(value)) {
+          each.tx.params.value = JSON.parse(value)
+        } else {
+          each.tx.params.value = value;
+        }
+      }
       return each;
     })
     res.status(200).json({

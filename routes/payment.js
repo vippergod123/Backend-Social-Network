@@ -16,6 +16,7 @@ router.post('/',isLoggedin, function(req, res, next) {
     handleTransaction.encodePaymentTransaction(account, address, amount, private_key)
     .then((response)=>{
     axios.get(broadcastRequest+response).then((resp)=>{
+        console.log(resp.data);
         res.status(200).json({
         message: "payment success",
         })
