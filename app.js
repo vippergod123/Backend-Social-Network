@@ -16,7 +16,7 @@ var paymentRouter = require('./routes/payment');
 var updateAccountRouter = require('./routes/update_account');
 var signoutRouter = require('./routes/signout');
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
-// var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
+var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 
 IntervalGetAccount();
 // IntervalGetAllBlock();
