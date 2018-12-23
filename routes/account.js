@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const transaction = require('../lib/handleTransaction');
 const moment  = require('moment');
-
+const transaction = require('../lib/handleTransaction');
 const Domain = require('../config/nodePublic');
+const BANDWIDTH_PERIOD = 86400;
+const MAX_BLOCK_SIZE = 22020096;
+const RESERVE_RATIO = 1;
+const MAX_CELLULOSE = Number.MAX_SAFE_INTEGER;
+const NETWORK_BANDWIDTH = RESERVE_RATIO * MAX_BLOCK_SIZE * BANDWIDTH_PERIOD;
 
 function CalculateAmount(data, public_key) {
     let amount = 0;
@@ -27,7 +31,6 @@ function FindSequenceAvailable(data, public_key) {
     return 1;
 }
 
-
 function isJson(str) {
     try {
         JSON.parse(str);
@@ -35,82 +38,51 @@ function isJson(str) {
         return false;
     }
     return true;
-  }
-  
+}
 
-router.post('/', function(req, res, next) {
-    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
-    axios.get(TransactionFromPublicNode)
-    .then((response) => {
-        const data = response.data.result.txs.map((each) => {
-            each.tx = transaction.decodeTransaction(each.tx);
-            each.tx.memo = each.tx.memo.toString();
-            each.tx.signature = each.tx.signature.toString('hex');
-            return each;
+function GetOnePage(public_key, page){
+    return new Promise((resolve, reject) => { 
+        var GetTransaction = Domain.komodoDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=30";
+        axios.get(GetTransaction)
+        .then((response) => {
+            resolve(response.data.result.txs);
         })
-        const sequence = FindSequenceAvailable(data, req.body.public_key);
-        var displayName = "Account";
-        var picture = null;
-        var followings;
-        var count = 3;
-        var temp = [1, 1, 1];
-        for(const block of data) {
-            if(block.tx.operation === "update_account" && block.tx.params.key === "name" && temp[0] === 1) {
-                displayName = block.tx.params.value.toString();
-                count--;
-                temp[0]--;
-            }
-            if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) {
-                picture = block.tx.params.value.toString('base64');
-                count--;
-                temp[1]--;
-            }
-            if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
-                const value = block.tx.params.value.toString();
-                isJson(value) ? followings = JSON.parse(value) : followings = value; //////////////////////////////////////////////////
-                count--;
-                temp[2]--;
-            }
-            if(count === 0)
-                break;
-        }
-        console.log(response.data)
-        if(response.data.result.txs.length > 0) {
-            res.status(200).json({
-                message: 'get account success',
-                status: 200,
-                displayName: displayName,
-                followings: followings,
-                amount: CalculateAmount(data, req.body.public_key),
-                sequence: sequence,
-                picture: picture,
-            });
-        } else {
-            res.status(201).json({
-                message: 'get account falied',
-                status: 201,
-            });
-        }
-    })
-    .catch(error => {
-        console.log(error);
-        res.status(201).json({
-            message: 'calculate error',
-            status: 201,
+        .catch(error => {
+            reject(error);
         });
-    });
-});
+    })
+}
 
-const BANDWIDTH_PERIOD = 86400;
-const MAX_BLOCK_SIZE = 22020096;
-const RESERVE_RATIO = 1;
-const MAX_CELLULOSE = Number.MAX_SAFE_INTEGER;
-const NETWORK_BANDWIDTH = RESERVE_RATIO * MAX_BLOCK_SIZE * BANDWIDTH_PERIOD;
-// const bandwidthLimit = account.balance / MAX_CELLULOSE * NETWORK_BANDWIDTH;
+function LoadAllBlock(public_key) {
+    return new Promise((resolve, reject) => { 
+        var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
+        axios.get(TransactionFromPublicNode)
+        .then((response) => {
+            if(response.data.result.txs.length === 0) {
+                reject("txs is null");
+            }
+            var page = Math.floor(response.data.result.total_count/30) + 1;
+            var foo = [];
+            for (var i = 2; i <= page; i++) {
+                foo.push(i);
+            }
+            Promise.all(foo.map(each => GetOnePage(public_key, each)))
+            .then((arrayOfResults) => {
+                var results = response.data.result.txs;
+                for (var i = 0; i < arrayOfResults.length; i++)
+                    results = [...results, ...arrayOfResults[i]];
+                resolve(results);
+            }) 
+        })
+        .catch(error => {
+            reject(error);
+        });
+    })
+}
 
 function SetAmountForBlock(data, public_key) {
     let amount = 0;
-    data.forEach((block) => {
+    data.forEach((block) => { 
         const tx = transaction.decodeTransaction(block.tx);
         if (tx.operation === "payment") {
             if (tx.account === public_key) {
@@ -124,7 +96,7 @@ function SetAmountForBlock(data, public_key) {
                 block.account = '0';
             }
         } else {
-            if (tx.account === public_key) {
+            if (block.tx.account === public_key) {
                 block.amount = amount;
                 block.account = public_key;
             }
@@ -148,25 +120,22 @@ function SetTimeForBlock(data) {
                 if(count >= data.length)
                     resolve(data);
             })
+            .catch(err => {
+                reject(err)
+            })
         })
         
     })
 }
 
-router.post('/calculate_energy', function(req, res, next) {
-    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
-    axios.get(TransactionFromPublicNode)
-    .then((response) => {
-        if (response.data.result.txs.length <= 0) {
-            res.status(201).json({
-                message: 'calculate energy failed',
-                status: 201,
-            })
+function CalculateEnergy(txs, public_key) {
+    return new Promise((resolve, reject) => {
+        if (txs.length <= 0) {
+            reject("txs null in calculate energy")
         }
         const now = moment(Date.now()).unix();
-        const data = response.data.result.txs;
-        SetAmountForBlock(data, req.body.public_key);
-        SetTimeForBlock(data)
+        SetAmountForBlock(txs, public_key);
+        SetTimeForBlock(txs)
         .then((response)=>{
             response[0].energy = 0;
             response[1].energy = Math.ceil(response[1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
@@ -178,33 +147,83 @@ router.post('/calculate_energy', function(req, res, next) {
                 diff = response[i].time - response[i-1].time;
                 bandwidthLimitprev = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
                 bandwidthLimit = Math.ceil(response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
-                bandwidth = Math.ceil((response[i].tx.length*3/4));          
+                bandwidth = Math.ceil(response[i].tx.length*3/4);          
                 energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
                 response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
-                if (response[i].account === req.body.public_key) {
+                if (response[i].account === public_key) {
                     response[i].energy -= bandwidth;
                 }
                 const tx = transaction.decodeTransaction(response[i].tx);
                 if (tx.operation === "payment") {
                     response[i].energy = bandwidthLimit;
                 }
-                console.log(diff + ' ' + bandwidth + " " +  response[i].energy + " " + energyrecovery);
+                console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
-            console.log(energy);
-            res.status(200).json({
-                message: 'calculate energy success',
-                status: 200,
-                energy: energy,
-                data: response,
+            response[response.length-1].energy = energy;
+            resolve(response);
+        })
+    })
+}
+
+router.post('/', function(req, res, next) {
+    var amount = 0;
+    var sequence = 0;
+    var displayName = "Account";
+    var picture = null;
+    var followings;
+    LoadAllBlock(req.body.public_key)
+    .then((response) => {
+        CalculateEnergy(response, req.body.public_key)
+        .then((response) => {  
+            const data = response.map((each) => {
+                each.tx = transaction.decodeTransaction(each.tx);
+                each.tx.memo = each.tx.memo.toString();
+                each.tx.signature = each.tx.signature.toString('hex');
+                return each;
             })
+            amount = CalculateAmount(data, req.body.public_key);
+            sequence = FindSequenceAvailable(data, req.body.public_key);
+            var count = 3;
+            var temp = [1, 1, 1];
+            for(const block of data) {
+                if(block.tx.operation === "update_account" && block.tx.params.key === "name" && temp[0] === 1) {
+                    displayName = block.tx.params.value.toString();
+                    count--;
+                    temp[0]--;
+                }
+                if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) {
+                    picture = block.tx.params.value.toString('base64');
+                    count--;
+                    temp[1]--;
+                }
+                if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
+                    const value = block.tx.params.value.toString();
+                    isJson(value) ? followings = JSON.parse(value) : followings = value; //////////////////////////////////////////////////
+                    count--;
+                    temp[2]--;
+                }
+                if(count === 0)
+                    break;
+            }         
+            res.status(200).json({
+                message: 'get account success',
+                status: 200,
+                displayName: displayName,
+                followings: followings,
+                amount: amount,
+                energy: response[response.length-1].energy,
+                sequence: sequence,
+                picture: picture,
+            });
         })
     })
     .catch(error => {
         console.log(error);
         res.status(201).json({
-            message: 'calculate energy error',
+            error: error,
+            message: 'calculate error',
             status: 201,
         });
     });
