@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const transaction = require('../lib/handleTransaction');
+const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
 
 // Middleware
 const {isLoggedin} = require('../Global/Function/middleware');
@@ -16,7 +17,7 @@ function isJson(str) {
 }
 
 router.post('/',isLoggedin, function(req, res, next) {
-  var TransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+req.body.account+"%27%22";
+  var TransactionFromPublicNode = publicDomain + "/tx_search?query=%22account=%27"+req.body.account+"%27%22";
   axios.get(TransactionFromPublicNode)
   .then((response) => {
     const data = response.data.result.txs.map((each) => {

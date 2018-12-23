@@ -4,14 +4,14 @@ const axios = require('axios');
 
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
-
+const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
 /* GET users listing. */
 
 // Middleware
 const {isLoggedin} = require('../Global/Function/middleware');
 
 router.post('/',isLoggedin, function(req, res, next) {
-  var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+  var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx="
 
   handleTransaction.encodeCreateAccountTransaction(blockchainKey.public_key,req.query.public_key,blockchainKey.private_key)
   .then((response)=>{ 

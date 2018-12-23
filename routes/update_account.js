@@ -8,10 +8,11 @@ const blockchainKey = require('../config/blockchainKey');
 
 //Middelware
 const {isLoggedin} = require('../Global/Function/middleware');
+const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
 
 
 router.post('/update_name', isLoggedin , function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx=";
     var updateNameParams = new Buffer.from(req.body.name);
     handleTransaction.encodeUpdateNameTransaction(blockchainKey.public_key, updateNameParams, blockchainKey.private_key)
     .then((response) => {
@@ -41,7 +42,7 @@ router.post('/update_picture', function(req, res, next) {
             'Accept': 'application/json-rpc'
         };
         var option = { 
-            url: "https://komodo.forest.network/",
+            url: publicDomain + "/",
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
@@ -73,7 +74,7 @@ router.post('/update_picture', function(req, res, next) {
 });
 
 router.post('/update_followings', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx=";
     var follwing= {
             addresses: [
                 "GBFNM2W3QNSPR4KGY4FNEF6YUF7STM5LF5VOARFCCQCSLPZMSEQTZ4MU",
