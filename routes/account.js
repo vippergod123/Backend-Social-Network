@@ -76,7 +76,6 @@ router.post('/',isLoggedin, function(req, res, next) {
             if(count === 0)
                 break;
         }
-        console.log(response.data)
         if(response.data.result.txs.length > 0) {
             res.status(200).json({
                 message: 'get account success',
