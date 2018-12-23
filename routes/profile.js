@@ -6,6 +6,7 @@ const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
 
 // Middleware
 const {isLoggedin} = require('../Global/Function/middleware');
+const buf = require("buffer")
 
 function isJson(str) {
   try {
@@ -24,7 +25,7 @@ router.post('/',isLoggedin, function(req, res, next) {
       each.tx = transaction.decodeTransaction(each.tx);
       each.tx.memo = each.tx.memo.toString();
       each.tx.signature = each.tx.signature.toString('hex');
-      if(each.tx.params.content) {
+      if(each.tx.params.content) {    
         const content = each.tx.params.content.toString();
         if(isJson(content))
           each.tx.params.content = JSON.parse(content);
@@ -33,12 +34,11 @@ router.post('/',isLoggedin, function(req, res, next) {
       }
       if(each.tx.params.value && each.tx.params.key === 'name') { 
         each.tx.params.value = each.tx.params.value.toString();
-      }
-      if(each.tx.params.value && each.tx.params.key === 'picture') { 
+      } else if(each.tx.params.value && each.tx.params.key === 'picture') { 
         each.tx.params.value = each.tx.params.value.toString('base64');
-      }
-      if(each.tx.params.value && each.tx.params.key === 'followings') { 
-        const value = each.tx.params.value.toString();
+      } else if(each.tx.params.value && each.tx.params.key === 'followings') {
+      
+        const value = each.tx.params.value.toString('base64');  ///////////////////////////////////////////////////////////
         if(isJson(value)) {
           each.tx.params.value = JSON.parse(value)
         } else {
