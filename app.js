@@ -14,11 +14,11 @@ var profileRouter = require('./routes/profile');
 var signinRouter = require('./routes/signin');
 var paymentRouter = require('./routes/payment');
 var updateAccountRouter = require('./routes/update_account');
-
+var signoutRouter = require('./routes/signout');
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
 // var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 
-// IntervalGetAccount();
+IntervalGetAccount();
 // IntervalGetAllBlock();
 
 var app = express();
@@ -63,6 +63,7 @@ app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
 app.use('/signin',signinRouter);
 app.use('/update_account', updateAccountRouter);
+app.use('/signout', signoutRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
