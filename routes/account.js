@@ -40,7 +40,7 @@ function isJson(str) {
   }
   
 
-router.post('/', function(req, res, next) {
+router.post('/',isLoggedin, function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
     .then((response) => {
@@ -154,7 +154,7 @@ function SetTimeForBlock(data) {
     })
 }
 
-router.post('/calculate_energy', function(req, res, next) {
+router.post('/calculate_energy',isLoggedin, function(req, res, next) {
     var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
     axios.get(TransactionFromPublicNode)
     .then((response) => {

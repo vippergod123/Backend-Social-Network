@@ -30,7 +30,7 @@ router.post('/update_name', isLoggedin , function(req, res, next) {
 
 });
 
-router.post('/update_picture', function(req, res, next) {
+router.post('/update_picture',isLoggedin, function(req, res, next) {
     var picture = fs.readFileSync('./routes/cap.jpg');
     var updateParams = new Buffer.from(picture);
 
@@ -73,7 +73,7 @@ router.post('/update_picture', function(req, res, next) {
     })
 });
 
-router.post('/update_followings', function(req, res, next) {
+router.post('/update_followings',isLoggedin, function(req, res, next) {
     var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx=";
     var follwing= {
             addresses: [
