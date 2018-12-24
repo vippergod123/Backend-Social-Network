@@ -159,7 +159,7 @@ function CalculateEnergy(txs, public_key) {
                 if (tx.operation === "payment") {
                     response[i].energy = bandwidthLimit;
                 }
-                console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
+                // console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
