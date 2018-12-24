@@ -41,7 +41,7 @@ function isJson(str) {
   
 
 router.post('/',isLoggedin, function(req, res, next) {
-    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22";
+    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22&per_page=100";
     axios.get(TransactionFromPublicNode)
     .then((response) => {
         const data = response.data.result.txs.map((each) => {

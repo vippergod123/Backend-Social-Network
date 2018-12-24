@@ -15,6 +15,11 @@ var signinRouter = require('./routes/signin');
 var paymentRouter = require('./routes/payment');
 var updateAccountRouter = require('./routes/update_account');
 var signoutRouter = require('./routes/signout');
+var signupRouter = require('./routes/signup');
+
+// Test Router 
+var decodeTxRouter = require('./routes/decode_transaction');
+
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
 var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 
@@ -61,9 +66,13 @@ app.use('/create_account', createAccountRouter);
 app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
-app.use('/signin',signinRouter);
 app.use('/update_account', updateAccountRouter);
+
+app.use('/signup', signupRouter)
+app.use('/signin',signinRouter);
 app.use('/signout', signoutRouter)
+// Test Router
+app.use('/decode', decodeTxRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
