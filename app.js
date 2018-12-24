@@ -30,7 +30,7 @@ IntervalGetAccount();
 var app = express();
 
 
-app.use(sessions({
+app.use(sessions({  
   secret: '(!)*#(!JE)WJEqw09ej12',
   resave: false,
   saveUninitialized: true

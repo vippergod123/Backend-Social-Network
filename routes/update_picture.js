@@ -17,10 +17,12 @@ router.post('/', function(req, res, next) {
             jsonrpc: '2.0',
             method: 'broadcast_tx_commit',
             params: [encodePictureTransaction],
-            id: "",
+            id: 1,
         })
     };
     request(option, (error, response) => {
+        console.log(response.body);
+        
         var body = JSON.parse(response.body);
         if(body.result.height != "0") {
             res.status(200).json({
