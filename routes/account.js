@@ -64,7 +64,7 @@ function LoadAllBlock(public_key) {
     return new Promise((resolve, reject) => { 
         var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
         axios.get(TransactionFromPublicNode)
-        .then((response) => {
+        .then((response) => { 
             if(response.data.result.txs.length === 0) {
                 reject("txs is null");
             }
@@ -103,7 +103,7 @@ function SetAmountForBlock(data, public_key) {
                 block.account = '0';
             }
         } else {
-            if (block.tx.account === public_key) {
+            if (tx.account === public_key) {
                 block.amount = amount;
                 block.account = public_key;
             }
@@ -151,7 +151,6 @@ function CalculateEnergy(txs, public_key) {
             var bandwidth = 0;
             var energyrecovery = 0;
             for(let i = 2; i < response.length; i++) {
-                // console.log(response[i]);
                 diff = response[i].time - response[i-1].time;
                 bandwidthLimitprev = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
                 bandwidthLimit = Math.ceil(response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
@@ -159,12 +158,10 @@ function CalculateEnergy(txs, public_key) {
                 energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
                 response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
                 if (response[i].account === public_key) {
-                    console.log("a");
                     response[i].energy -= bandwidth;
                 }
                 const tx = transaction.decodeTransaction(response[i].tx);
                 if (tx.operation === "payment") {
-                    console.log(tx);
                     response[i].energy = bandwidthLimit;
                 }
                 console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
@@ -184,8 +181,10 @@ router.post('/', function(req, res, next) {
     var displayName = "Account";
     var picture = null;
     var followings;
-    LoadAllBlock(req.body.public_key)
-    .then((response) => {
+    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
+    axios.get(TransactionFromPublicNode)
+    .then((resp) => {
+        var response = resp.data.result.txs;
         CalculateEnergy(response, req.body.public_key)
         .then((response) => {  
             const data = response.map((each) => {
@@ -238,11 +237,11 @@ router.post('/', function(req, res, next) {
         })
     })
     .catch(error => {
-        console.log(error);
-        res.status(201).json({
+        // console.log(error);
+        res.status(400).json({
             error: error,
             message: 'calculate error',
-            status: 201,
+            status: 400,
         });
     });
 });
