@@ -151,6 +151,7 @@ function CalculateEnergy(txs, public_key) {
             var bandwidth = 0;
             var energyrecovery = 0;
             for(let i = 2; i < response.length; i++) {
+                // console.log(response[i]);
                 diff = response[i].time - response[i-1].time;
                 bandwidthLimitprev = Math.ceil(response[i-1].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
                 bandwidthLimit = Math.ceil(response[i].amount * NETWORK_BANDWIDTH / MAX_CELLULOSE);
@@ -158,17 +159,20 @@ function CalculateEnergy(txs, public_key) {
                 energyrecovery = Math.ceil(diff * bandwidthLimitprev / BANDWIDTH_PERIOD);
                 response[i].energy = response[i-1].energy+energyrecovery<bandwidthLimit ? response[i-1].energy+energyrecovery : bandwidthLimit;
                 if (response[i].account === public_key) {
+                    console.log("a");
                     response[i].energy -= bandwidth;
                 }
                 const tx = transaction.decodeTransaction(response[i].tx);
                 if (tx.operation === "payment") {
+                    console.log(tx);
                     response[i].energy = bandwidthLimit;
                 }
-                // console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
+                console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
             response[response.length-1].energy = energy;
+            console.log(energyrecovery + " " + energy);
             resolve(response);
         })
     })
@@ -200,23 +204,23 @@ router.post('/', function(req, res, next) {
                     count--;
                     temp[0]--;
                 }
-                if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) {
+                if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) { 
                     picture = block.tx.params.value.toString('base64');
                     count--;
                     temp[1]--;
                 }
                 if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
                     try{
-                        var temp = Followings.decode(block.tx.params.value);
-                        if(temp.addresses.length !== 0) {
-                            followings = temp.addresses.map(address => base32.encode(address));
+                        var follow = Followings.decode(block.tx.params.value);
+                        if(follow.addresses.length !== 0) {
+                            followings = follow.addresses.map(address => base32.encode(address));
                         }
+                        count--;
+                        temp[2]--;
                       }
                     catch(err) {
                         console.log("loi tai following sai cau truc");
                     }
-                    count--;
-                    temp[2]--;
                 }
                 if(count === 0)
                     break;
