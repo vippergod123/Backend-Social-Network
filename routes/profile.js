@@ -35,20 +35,37 @@ router.post('/', function(req, res, next) {
         status: 201,
       });
     }
-
     const data = response.data.result.txs.map((each) => {
       each.tx = transaction.decodeTransaction(each.tx);
       each.tx.memo = each.tx.memo.toString();
       each.tx.signature = each.tx.signature.toString('hex');
-      if(each.tx.params.content && each.tx.params.key === 'post') {    
+
+      if(each.tx.params.content && each.tx.operation === 'post') {    
         try{
           var content = PlainTextContent.decode(each.tx.params.content);
           each.tx.params.content = content;
         }
         catch(err) {
-          console.log("loi tai content sai cau truc");
+          console.log("loi tai post sai cau truc");
         }
       }
+
+      if(each.tx.params.content && each.tx.operation === 'interact') {    
+        try{
+          const type = vstruct([
+            { name: 'type', type: vstruct.UInt8 },
+          ])
+          
+          var content = type.decode(each.tx.params.content).type === 1
+           ? PlainTextContent.decode(each.tx.params.content) : ReactContent.decode(each.tx.params.content);
+          each.tx.params.content = content;
+          console.log(content);
+        }
+        catch(err) {
+          console.log("loi tai interact sai cau truc");
+        }
+      }
+
       if(each.tx.params.value && each.tx.params.key === 'name') { 
         each.tx.params.value = each.tx.params.value.toString();
       } else if(each.tx.params.value && each.tx.params.key === 'picture') { 

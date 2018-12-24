@@ -47,7 +47,6 @@ router.post('/comment', function (req, res, next) {
     handleTransaction.encodeInteractTransaction(blockchainKey.public_key, hash, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
-            console.log(resp.data);
             res.status(200).json({
                 message: "comment success",
             })
@@ -60,6 +59,29 @@ router.post('/comment', function (req, res, next) {
     })
 });
 
+router.post('/reaction', function (req, res, next) {
+    var hash = "DF828E91D9A81CAA848860BB02F2B4F2ADE7D2B8ACB3E80A5238FF74982F2C97";
+    var react = { 
+        type: 2, 
+        reaction: parseInt(req.body.reaction),
+    }
+    var content = new Buffer.from(ReactContent.encode(react));
+    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+    handleTransaction.encodeInteractTransaction(blockchainKey.public_key, hash, content, blockchainKey.private_key)
+    .then((response) => {
+        axios.get(broadcastRequest + response).then((resp) => {
+            console.log(resp.data);
+            res.status(200).json({
+                message: "react success",
+            })
+        })
+    })
+    .catch((err) => {
+        res.status(400).json({
+            error: err
+        })
+    })
+});
 
 
 module.exports = router;

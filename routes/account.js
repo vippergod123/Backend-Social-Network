@@ -2,13 +2,20 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const moment  = require('moment');
+const vstruct = require('varstruct');
+const base32 = require('base32.js')
 const transaction = require('../lib/handleTransaction');
 const Domain = require('../config/nodePublic');
+
 const BANDWIDTH_PERIOD = 86400;
 const MAX_BLOCK_SIZE = 22020096;
 const RESERVE_RATIO = 1;
 const MAX_CELLULOSE = Number.MAX_SAFE_INTEGER;
 const NETWORK_BANDWIDTH = RESERVE_RATIO * MAX_BLOCK_SIZE * BANDWIDTH_PERIOD;
+
+const Followings = vstruct([
+    { name: 'addresses', type: vstruct.VarArray(vstruct.UInt16BE, vstruct.Buffer(35)) },
+]);
 
 function CalculateAmount(data, public_key) {
     let amount = 0;
@@ -157,7 +164,7 @@ function CalculateEnergy(txs, public_key) {
                 if (tx.operation === "payment") {
                     response[i].energy = bandwidthLimit;
                 }
-                console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
+                // console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
@@ -199,8 +206,15 @@ router.post('/', function(req, res, next) {
                     temp[1]--;
                 }
                 if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
-                    const value = block.tx.params.value.toString();
-                    isJson(value) ? followings = JSON.parse(value) : followings = value; //////////////////////////////////////////////////
+                    try{
+                        var temp = Followings.decode(block.tx.params.value);
+                        if(temp.addresses.length !== 0) {
+                            followings = temp.addresses.map(address => base32.encode(address));
+                        }
+                      }
+                    catch(err) {
+                        console.log("loi tai following sai cau truc");
+                    }
                     count--;
                     temp[2]--;
                 }
