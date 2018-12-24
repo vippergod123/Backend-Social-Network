@@ -19,6 +19,7 @@ var signupRouter = require('./routes/signup');
 
 // Test Router 
 var decodeTxRouter = require('./routes/decode_transaction');
+var updatePictureRouter = require('./routes/update_picture');
 
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
 var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
@@ -67,6 +68,7 @@ app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
 app.use('/update_account', updateAccountRouter);
+app.use('/update_picture', updatePictureRouter);
 
 app.use('/signup', signupRouter)
 app.use('/signin',signinRouter);

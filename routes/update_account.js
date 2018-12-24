@@ -6,7 +6,6 @@ const base32 = require('base32.js')
 const request = require('request');
 const vstruct = require('varstruct');
 
-
 const handleTransaction = require('../lib/handleTransaction');
 const blockchainKey = require('../config/blockchainKey');
 
@@ -61,18 +60,22 @@ router.post('/update_picture',isLoggedin, function(req, res, next) {
             if(body.result.height != "0") {
                 res.status(200).json({
                     message: "update piture success",
+                    status: 200,
                 })
             } else {
                 console.log(error);
-                res.status(200).json({
+                res.status(201).json({
                     message: "update piture failed",
+                    status: 201,
                 })
             }
         });
     })
     .catch((err) => {
         res.status(400).json({
-            message: err
+            message: err,
+            message: "update piture error",
+            status: 400,
         })
     })
 });
@@ -105,7 +108,5 @@ router.post('/update_followings', function(req, res, next) {
     })
 
 });
-
-
 
 module.exports = router;
