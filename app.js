@@ -11,6 +11,7 @@ var createPostRouter = require('./routes/create_post');
 var profileRouter = require('./routes/profile');
 var paymentRouter = require('./routes/payment');
 var updateAccountRouter = require('./routes/update_account');
+var updatePictureRouter = require('./routes/update_picture');
 
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
 // var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
@@ -36,6 +37,7 @@ app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
 app.use('/update_account', updateAccountRouter);
+app.use('/update_picture', updatePictureRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
