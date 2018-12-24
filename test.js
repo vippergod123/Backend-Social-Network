@@ -236,77 +236,7 @@ var followings = {
 }
 var tx = [
     0,
-    2,
-    48,
-    47,
-    85,
-    225,
-    52,
-    195,
-    71,
-    232,
-    40,
-    199,
-    87,
-    10,
-    102,
-    115,
-    151,
-    86,
-    233,
-    255,
-    169,
-    56,
-    239,
-    43,
-    58,
-    37,
-    168,
-    116,
-    112,
-    9,
-    58,
-    142,
-    61,
-    157,
-    237,
-    195,
-    240,
-    48,
-    73,
-    223,
-    131,
-    193,
-    134,
-    201,
-    52,
-    152,
-    145,
-    46,
-    74,
-    46,
-    155,
-    192,
-    128,
-    4,
-    40,
-    166,
-    240,
-    87,
-    131,
-    27,
-    39,
-    93,
-    224,
-    13,
-    19,
-    137,
-    173,
-    208,
-    27,
-    120,
-    32,
-    75
+    0
 ]
 
 const base32 = require("base32.js"); 
@@ -315,8 +245,12 @@ const address = vstruct([
   ]);
         
   var data = Followings.decode(Buffer.from(tx))
+  console.log(data);
+  console.log(data.addresses.length);
+  
   data.addresses.map( each => { 
     var decode = base32.encode(each)
     console.log(decode)   
   })
-console.log(data);
+  
+
