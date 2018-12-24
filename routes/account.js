@@ -66,7 +66,7 @@ function LoadAllBlock(public_key) {
     return new Promise((resolve, reject) => { 
         var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
         axios.get(TransactionFromPublicNode)
-        .then((response) => {
+        .then((response) => { 
             if(response.data.result.txs.length === 0) {
                 reject("txs is null");
             }
@@ -105,7 +105,7 @@ function SetAmountForBlock(data, public_key) {
                 block.account = '0';
             }
         } else {
-            if (block.tx.account === public_key) {
+            if (tx.account === public_key) {
                 block.amount = amount;
                 block.account = public_key;
             }
@@ -166,11 +166,12 @@ function CalculateEnergy(txs, public_key) {
                 if (tx.operation === "payment") {
                     response[i].energy = bandwidthLimit;
                 }
-                // console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
+                console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
             response[response.length-1].energy = energy;
+            console.log(energyrecovery + " " + energy);
             resolve(response);
         })
     })
@@ -182,8 +183,10 @@ router.post('/',isLoggedin, function(req, res, next) {
     var displayName = "Account";
     var picture = null;
     var followings;
-    LoadAllBlock(req.body.public_key)
-    .then((response) => {
+    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
+    axios.get(TransactionFromPublicNode)
+    .then((resp) => {
+        var response = resp.data.result.txs;
         CalculateEnergy(response, req.body.public_key)
         .then((response) => {  
             const data = response.map((each) => {
@@ -202,23 +205,23 @@ router.post('/',isLoggedin, function(req, res, next) {
                     count--;
                     temp[0]--;
                 }
-                if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) {
+                if(block.tx.operation === "update_account" && block.tx.params.key === "picture" && temp[1] === 1) { 
                     picture = block.tx.params.value.toString('base64');
                     count--;
                     temp[1]--;
                 }
                 if(block.tx.operation === "update_account" && block.tx.params.key === "followings" && temp[2] === 1) {
                     try{
-                        var temp = Followings.decode(block.tx.params.value);
-                        if(temp.addresses.length !== 0) {
-                            followings = temp.addresses.map(address => base32.encode(address));
+                        var follow = Followings.decode(block.tx.params.value);
+                        if(follow.addresses.length !== 0) {
+                            followings = follow.addresses.map(address => base32.encode(address));
                         }
+                        count--;
+                        temp[2]--;
                       }
                     catch(err) {
                         console.log("loi tai following sai cau truc");
                     }
-                    count--;
-                    temp[2]--;
                 }
                 if(count === 0)
                     break;
@@ -234,13 +237,20 @@ router.post('/',isLoggedin, function(req, res, next) {
                 picture: picture,
             });
         })
+        .catch(error => {
+            res.status(400).json({
+                error: error,
+                message: 'calculate error',
+                status: 400,
+            });
+        });
     })
     .catch(error => {
-        console.log(error);
-        res.status(201).json({
+        // console.log(error);
+        res.status(400).json({
             error: error,
             message: 'calculate error',
-            status: 201,
+            status: 400,
         });
     });
 });
