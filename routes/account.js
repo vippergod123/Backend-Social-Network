@@ -235,6 +235,13 @@ router.post('/', function(req, res, next) {
                 picture: picture,
             });
         })
+        .catch(error => {
+            res.status(400).json({
+                error: error,
+                message: 'calculate error',
+                status: 400,
+            });
+        });
     })
     .catch(error => {
         // console.log(error);
