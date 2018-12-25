@@ -7,6 +7,9 @@ const Domain = require('../config/nodePublic');
 
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
+const {isLoggedin} = require('../Global/Function/middleware');
+const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
+
 const PlainTextContent = vstruct([
     { name: 'type', type: vstruct.UInt8 },
     { name: 'text', type: vstruct.VarString(vstruct.UInt16BE) },
@@ -15,7 +18,7 @@ const ReactContent = vstruct([
     { name: 'type', type: vstruct.UInt8 },
     { name: 'reaction', type: vstruct.UInt8 },
   ]);
-router.post('/', function (req, res, next) {
+router.post('/',isLoggedin, function (req, res, next) {
     var post = { 
         type: 1, 
         text: req.body.content, 

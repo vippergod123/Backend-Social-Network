@@ -4,10 +4,14 @@ const axios = require('axios');
 
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
-const Domain = require('../config/nodePublic');
+const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
+/* GET users listing. */
 
-router.post('/', function(req, res, next) {
-  var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
+
+router.post('/',isLoggedin, function(req, res, next) {
+  var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx="
 
   handleTransaction.encodeCreateAccountTransaction(blockchainKey.public_key,req.query.public_key,blockchainKey.private_key)
   .then((response)=>{ 

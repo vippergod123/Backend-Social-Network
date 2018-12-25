@@ -3,8 +3,11 @@ const router = express.Router();
 const axios = require('axios');
 const Domain = require('../config/nodePublic');
 
-router.post('/', function(req, res, next) {
-  var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx=" + req.body.enCodeTransaction;
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
+
+router.post('/', isLoggedin, function(req, res, next) {
+  var broadcastRequest = Domain.komodoDomain + "broadcast_tx_commit?tx=" + req.body.enCodeTransaction;
   axios.get(broadcastRequest)
     .then((response) => {
       if (response.data.result.height != '0') {

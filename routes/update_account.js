@@ -10,8 +10,13 @@ const Domain = require('../config/nodePublic');
 const handleTransaction = require('../lib/handleTransaction');
 const blockchainKey = require('../config/blockchainKey');
 
-router.post('/update_name', function(req, res, next) {
-    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx=";
+//Middelware
+const {isLoggedin} = require('../Global/Function/middleware');
+const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
+
+
+router.post('/update_name', isLoggedin , function(req, res, next) {
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx=";
     var updateNameParams = new Buffer.from(req.body.name);
     handleTransaction.encodeUpdateNameTransaction(blockchainKey.public_key, updateNameParams, blockchainKey.private_key)
     .then((response) => {
@@ -29,11 +34,14 @@ router.post('/update_name', function(req, res, next) {
 
 });
 
-router.post('/update_picture', function(req, res, next) {
-    var picture = fs.readFileSync('./routes/cap.jpg');
+router.post('/update_picture',isLoggedin, function(req, res, next) {
+    var picture = fs.readFileSync('./routes/avatar.png');
+    console.log(picture);
+    
     var updateParams = new Buffer.from(picture);
-
-    handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key, updateParams, blockchainKey.private_key)
+    console.log(updateParams);
+    
+    handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key,req.body.image, blockchainKey.private_key)
     .then((response) => {
         var headers = {
             'User-Agent': 'Super Agent/0.0.1',
@@ -41,7 +49,11 @@ router.post('/update_picture', function(req, res, next) {
             'Accept': 'application/json-rpc'
         };
         var option = { 
+<<<<<<< HEAD
             url: "https://dragonfly.forest.network/",
+=======
+            url: publicDomain + "/",
+>>>>>>> 3525226930bdf03afeaa00a8f6145a4b55e0e072
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
@@ -81,7 +93,11 @@ const Followings = vstruct([
 ]);
 
 router.post('/update_followings', function(req, res, next) {
+<<<<<<< HEAD
     var broadcastRequest = "https://dragonfly.forest.network/broadcast_tx_commit?tx=";
+=======
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx=";
+>>>>>>> 3525226930bdf03afeaa00a8f6145a4b55e0e072
     var f1 = "GBFNM2W3QNSPR4KGY4FNEF6YUF7STM5LF5VOARFCCQCSLPZMSEQTZ4MU";
     var f2 = "GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD";
     var follwing= {

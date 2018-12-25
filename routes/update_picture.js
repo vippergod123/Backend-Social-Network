@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
+const publicNode = require('../Global/Variable/PublicNodeDomain');
 
 const Domain = require('../config/nodePublic');
 
@@ -12,18 +13,22 @@ router.post('/', function(req, res, next) {
         'Accept': 'application/json-rpc'
     };
     var option = { 
-        url: Domain.dragonflyDomain,
+        url: publicNode,
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
             jsonrpc: '2.0',
             method: 'broadcast_tx_commit',
             params: [encodePictureTransaction],
-            id: "",
+            id: 1,
         })
     };
     request(option, (error, response) => {
+        
+        try{
         var body = JSON.parse(response.body);
+        console.log(body);
+        
         if(body.result.height != "0") {
             res.status(200).json({
                 message: "update piture success",
@@ -34,6 +39,12 @@ router.post('/', function(req, res, next) {
             res.status(201).json({
                 message: "update piture failed",
                 status: 201,
+            })
+        }
+        }
+        catch(err) { 
+            res.json({
+                error:err,
             })
         }
     });

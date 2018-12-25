@@ -6,6 +6,7 @@ const vstruct = require('varstruct');
 const base32 = require('base32.js')
 const transaction = require('../lib/handleTransaction');
 const Domain = require('../config/nodePublic');
+const {isLoggedin} = require('../Global/Function/middleware');
 
 const BANDWIDTH_PERIOD = 86400;
 const MAX_BLOCK_SIZE = 22020096;
@@ -29,6 +30,7 @@ function CalculateAmount(data, public_key) {
     }
     return amount;
 }
+    
 function FindSequenceAvailable(data, public_key) {
     data.reverse();
     for(const block of data) {
@@ -164,18 +166,18 @@ function CalculateEnergy(txs, public_key) {
                 if (tx.operation === "payment") {
                     response[i].energy = bandwidthLimit;
                 }
-                console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
+                // console.log(bandwidth + " " + diff + ' ' + energyrecovery + " " +  response[i].energy);
             } 
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
             response[response.length-1].energy = energy;
-            console.log(energyrecovery + " " + energy);
+            // console.log(energyrecovery + " " + energy);
             resolve(response);
         })
     })
 }
 
-router.post('/', function(req, res, next) {
+router.post('/',isLoggedin, function(req, res, next) {
     var amount = 0;
     var sequence = 0;
     var displayName = "Account";

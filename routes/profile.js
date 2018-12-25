@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const transaction = require('../lib/handleTransaction');
+const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
+
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
+const buf = require("buffer")
 const vstruct = require('varstruct');
 const base32 = require('base32.js')
 
@@ -27,8 +32,8 @@ const Followings = vstruct([
   { name: 'addresses', type: vstruct.VarArray(vstruct.UInt16BE, vstruct.Buffer(35)) },
 ]);
 
-router.post('/', function(req, res, next) {
-  var TransactionFromPublicNode = Domain.dragonflyDomain + "tx_search?query=%22account=%27"+req.body.account+"%27%22&page=1&per_page=100";
+router.post('/',isLoggedin, function(req, res, next) {
+  var TransactionFromPublicNode =  publicDomain + "/tx_search?query=%22account=%27"+req.body.account+"%27%22&page=1&per_page=100";
   axios.get(TransactionFromPublicNode)
   .then((response) => {
     if (response.data.result.txs.length === 0) {
