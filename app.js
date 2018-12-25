@@ -18,8 +18,7 @@ var updatePictureRouter = require('./routes/update_picture');
 // var IntervalGetPostBlock = require('./lib/AsyncBlock/IntervalGetPostBlock');
 
 // IntervalGetAccount();
-// IntervalGetAllBlock();
-// IntervalGetPostBlock();
+IntervalGetAllBlock();
 
 var app = express();
 // view engine setup
