@@ -1,3 +1,3 @@
-const komodoDomain = "https://komodo.forest.network/"
+const komodoDomain = "https://dragonfly.forest.network/"
 
 module.exports.komodoDomain = komodoDomain

@@ -220,37 +220,51 @@
 // // module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
 
 
-const vstruct = require('varstruct');
-
-
-const Followings = vstruct([
-    { name: 'addresses', type: vstruct.VarArray(vstruct.UInt16BE, vstruct.Buffer(35)) },
-]);
-
-
-var followings = {
-    addresses: [
-        "GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD",
-        "GB2DOWKNWFB67473X5EBUEEIVSEWQ3PFMHMXEWIUAP3J2XYTBDGTTLTS",
-    ] 
+const {firestore} = require('./config/firebaseConfig');
+const FirestorePost= firestore.collection("Post")
+const moment = require('moment');
+var transaction = { 
+    version: 1,
+    account: 'GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD',
+    operation: "post",
+    sequence: 69,
+    params: {
+        content: {
+            type:1,
+            text: "Chao ngay moi"
+        },
+        key: [],
+    },
+    header: { 
+        time: "2018-12-24T17:40:48.351479818Z",
+        data_hash: "82C0113305A966A293F7C130F9E3F475715F976A51FA3E81E789F454BBD84397",
+    },
 }
-var tx = [
-    0,
-    0
-]
 
-const base32 = require("base32.js"); 
-const address = vstruct([
-    { name: "name", type: vstruct.Buffer(35) },
-  ]);
-        
-  var data = Followings.decode(Buffer.from(tx))
-  console.log(data);
-  console.log(data.addresses.length);
-  
-  data.addresses.map( each => { 
-    var decode = base32.encode(each)
-    console.log(decode)   
-  })
+// const PushPostToFirebase = () => { 
+//     var operation = transaction.operation
+//     if ( operation === "post" ){
+            
+//             FirestorePost.doc().set({
+//                 post: transaction,
+//                 like: new Array(),
+//                 comment: new Array(),
+//             }).then(() => { 
+//                 console.log(123);
+//             })
+//             .catch(err => {
+//                 console.log(err);
+                
+//             })
+//     }
+    
+//  } 
+
+var time = transaction.header.time
+var date = new Date(time)
+date = date.getTime()
+var second = moment(date).fromNow()
+console.log(second);
   
 
+//  PushPostToFirebase()

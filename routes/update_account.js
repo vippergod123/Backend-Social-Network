@@ -34,13 +34,13 @@ router.post('/update_name', isLoggedin , function(req, res, next) {
 });
 
 router.post('/update_picture',isLoggedin, function(req, res, next) {
-    // var picture = fs.readFileSync('./routes/avatar.png');
-    // console.log(picture);
+    var picture = fs.readFileSync('./routes/avatar.png');
+    console.log(picture);
     
-    // var updateParams = new Buffer.from(picture);
-    // console.log(updateParams);
+    var updateParams = new Buffer.from(picture);
+    console.log(updateParams);
     
-    handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key, req.body.image, blockchainKey.private_key)
+    handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key,req.body.image, blockchainKey.private_key)
     .then((response) => {
         var headers = {
             'User-Agent': 'Super Agent/0.0.1',

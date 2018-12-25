@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
+const publicNode = require('../Global/Variable/PublicNodeDomain');
 
 router.post('/', function(req, res, next) {
     var encodePictureTransaction = req.body.encodePictureTransaction;
@@ -10,7 +11,7 @@ router.post('/', function(req, res, next) {
         'Accept': 'application/json-rpc'
     };
     var option = { 
-        url: "https://komodo.forest.network/",
+        url: publicNode,
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
@@ -21,9 +22,11 @@ router.post('/', function(req, res, next) {
         })
     };
     request(option, (error, response) => {
-        console.log(response.body);
         
+        try{
         var body = JSON.parse(response.body);
+        console.log(body);
+        
         if(body.result.height != "0") {
             res.status(200).json({
                 message: "update piture success",
@@ -34,6 +37,12 @@ router.post('/', function(req, res, next) {
             res.status(201).json({
                 message: "update piture failed",
                 status: 201,
+            })
+        }
+        }
+        catch(err) { 
+            res.json({
+                error:err,
             })
         }
     });
