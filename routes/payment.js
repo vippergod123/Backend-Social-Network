@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
+const Domain = require('../config/nodePublic');
 const handleTransaction = require('../lib/handleTransaction');
 
 router.post('/', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
     var account = req.body.send_public_key;
     var address = req.body.receive_public_key;
     var amount = parseInt(req.body.amount);

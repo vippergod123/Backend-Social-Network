@@ -5,6 +5,8 @@ const transaction = require('../lib/handleTransaction');
 const vstruct = require('varstruct');
 const base32 = require('base32.js')
 
+const Domain = require('../config/nodePublic');
+
 function isJson(str) {
   try {
       JSON.parse(str);
@@ -26,7 +28,7 @@ const Followings = vstruct([
 ]);
 
 router.post('/', function(req, res, next) {
-  var TransactionFromPublicNode = "https://komodo.forest.network/tx_search?query=%22account=%27"+req.body.account+"%27%22&page=1&per_page=100";
+  var TransactionFromPublicNode = Domain.dragonflyDomain + "tx_search?query=%22account=%27"+req.body.account+"%27%22&page=1&per_page=100";
   axios.get(TransactionFromPublicNode)
   .then((response) => {
     if (response.data.result.txs.length === 0) {

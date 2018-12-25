@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const request = require('request');
 
+const Domain = require('../config/nodePublic');
+
 router.post('/', function(req, res, next) {
     var encodePictureTransaction = req.body.encodePictureTransaction;
     var headers = {
@@ -10,7 +12,7 @@ router.post('/', function(req, res, next) {
         'Accept': 'application/json-rpc'
     };
     var option = { 
-        url: "https://komodo.forest.network/",
+        url: Domain.dragonflyDomain,
         method: 'POST',
         headers: headers,
         body: JSON.stringify({

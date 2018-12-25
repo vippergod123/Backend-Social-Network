@@ -6,11 +6,12 @@ const base32 = require('base32.js')
 const request = require('request');
 const vstruct = require('varstruct');
 
+const Domain = require('../config/nodePublic');
 const handleTransaction = require('../lib/handleTransaction');
 const blockchainKey = require('../config/blockchainKey');
 
 router.post('/update_name', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
+    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx=";
     var updateNameParams = new Buffer.from(req.body.name);
     handleTransaction.encodeUpdateNameTransaction(blockchainKey.public_key, updateNameParams, blockchainKey.private_key)
     .then((response) => {
@@ -40,7 +41,7 @@ router.post('/update_picture', function(req, res, next) {
             'Accept': 'application/json-rpc'
         };
         var option = { 
-            url: "https://komodo.forest.network/",
+            url: "https://dragonfly.forest.network/",
             method: 'POST',
             headers: headers,
             body: JSON.stringify({
@@ -80,7 +81,7 @@ const Followings = vstruct([
 ]);
 
 router.post('/update_followings', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx=";
+    var broadcastRequest = "https://dragonfly.forest.network/broadcast_tx_commit?tx=";
     var f1 = "GBFNM2W3QNSPR4KGY4FNEF6YUF7STM5LF5VOARFCCQCSLPZMSEQTZ4MU";
     var f2 = "GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD";
     var follwing= {

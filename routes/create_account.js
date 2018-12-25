@@ -4,10 +4,10 @@ const axios = require('axios');
 
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
-/* GET users listing. */
+const Domain = require('../config/nodePublic');
 
 router.post('/', function(req, res, next) {
-  var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+  var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
 
   handleTransaction.encodeCreateAccountTransaction(blockchainKey.public_key,req.query.public_key,blockchainKey.private_key)
   .then((response)=>{ 

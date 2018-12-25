@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const base32 = require('base32.js');
 const vstruct = require('varstruct');
+const Domain = require('../config/nodePublic');
 
 const blockchainKey = require('../config/blockchainKey');
 const handleTransaction = require('../lib/handleTransaction');
@@ -20,7 +21,7 @@ router.post('/', function (req, res, next) {
         text: req.body.content, 
     }
     var content = new Buffer.from(PlainTextContent.encode(post));
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
     handleTransaction.encodePostTransaction(blockchainKey.public_key, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
@@ -43,7 +44,7 @@ router.post('/comment', function (req, res, next) {
         text: req.body.comment, 
     }
     var content = new Buffer.from(PlainTextContent.encode(comment));
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
     handleTransaction.encodeInteractTransaction(blockchainKey.public_key, hash, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
@@ -66,7 +67,7 @@ router.post('/reaction', function (req, res, next) {
         reaction: parseInt(req.body.reaction),
     }
     var content = new Buffer.from(ReactContent.encode(react));
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
     handleTransaction.encodeInteractTransaction(blockchainKey.public_key, hash, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {

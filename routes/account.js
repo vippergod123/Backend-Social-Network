@@ -49,7 +49,7 @@ function isJson(str) {
 
 function GetOnePage(public_key, page){
     return new Promise((resolve, reject) => { 
-        var GetTransaction = Domain.komodoDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=30";
+        var GetTransaction = Domain.dragonflyDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=30";
         axios.get(GetTransaction)
         .then((response) => {
             resolve(response.data.result.txs);
@@ -62,7 +62,7 @@ function GetOnePage(public_key, page){
 
 function LoadAllBlock(public_key) {
     return new Promise((resolve, reject) => { 
-        var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
+        var TransactionFromPublicNode = Domain.dragonflyDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
         axios.get(TransactionFromPublicNode)
         .then((response) => { 
             if(response.data.result.txs.length === 0) {
@@ -118,7 +118,7 @@ function SetTimeForBlock(data) {
     var count = 0;
     return new Promise((resolve, reject) => {
         data.forEach((block) => {
-            var GetBlock = Domain.komodoDomain + "block?height=" + block.height;
+            var GetBlock = Domain.dragonflyDomain + "block?height=" + block.height;
             axios.get(GetBlock)
             .then(res => {
                 block.time = res.data.result.block.header.time;
@@ -181,7 +181,7 @@ router.post('/', function(req, res, next) {
     var displayName = "Account";
     var picture = null;
     var followings;
-    var TransactionFromPublicNode = Domain.komodoDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
+    var TransactionFromPublicNode = Domain.dragonflyDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
     axios.get(TransactionFromPublicNode)
     .then((resp) => {
         var response = resp.data.result.txs;
