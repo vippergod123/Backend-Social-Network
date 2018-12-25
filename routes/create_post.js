@@ -38,7 +38,7 @@ router.post('/', function (req, res, next) {
 });
 
 router.post('/comment', function (req, res, next) {
-    var hash = "DF828E91D9A81CAA848860BB02F2B4F2ADE7D2B8ACB3E80A5238FF74982F2C97";
+    var hash = "942E9871C7D191C88929750BF782F78B3A5573A00F9453DBA65B4D05745CCF41";
     var comment = { 
         type: 1, 
         text: req.body.comment, 
