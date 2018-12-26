@@ -31,7 +31,7 @@ app.use('/create_post', createPostRouter);
 app.use('/profile', profileRouter);
 app.use('/payment', paymentRouter);
 
-test.IntervalGetHeightBlock();
+// test.IntervalGetHeightBlock();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
