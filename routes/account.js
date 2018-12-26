@@ -5,7 +5,7 @@ const moment  = require('moment');
 const vstruct = require('varstruct');
 const base32 = require('base32.js')
 const transaction = require('../lib/handleTransaction');
-const Domain = require('../config/nodePublic');
+const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
 const {isLoggedin} = require('../Global/Function/middleware');
 
 const BANDWIDTH_PERIOD = 86400;
@@ -51,7 +51,9 @@ function isJson(str) {
 
 function GetOnePage(public_key, page){
     return new Promise((resolve, reject) => { 
-        var GetTransaction = Domain.dragonflyDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=30";
+const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
+const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
+        var GetTransaction = publicDomain + "/tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=30";
         axios.get(GetTransaction)
         .then((response) => {
             resolve(response.data.result.txs);
@@ -64,7 +66,7 @@ function GetOnePage(public_key, page){
 
 function LoadAllBlock(public_key) {
     return new Promise((resolve, reject) => { 
-        var TransactionFromPublicNode = Domain.dragonflyDomain + "tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
+        var TransactionFromPublicNode = publicDomain + "/tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
         axios.get(TransactionFromPublicNode)
         .then((response) => { 
             if(response.data.result.txs.length === 0) {
@@ -183,7 +185,7 @@ router.post('/',isLoggedin, function(req, res, next) {
     var displayName = "Account";
     var picture = null;
     var followings;
-    var TransactionFromPublicNode = Domain.dragonflyDomain + "tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
+    var TransactionFromPublicNode = publicDomain + "/tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
     axios.get(TransactionFromPublicNode)
     .then((resp) => {
         var response = resp.data.result.txs;

@@ -6,14 +6,12 @@ const base32 = require('base32.js')
 const request = require('request');
 const vstruct = require('varstruct');
 
-const Domain = require('../config/nodePublic');
 const handleTransaction = require('../lib/handleTransaction');
 const blockchainKey = require('../config/blockchainKey');
 
 //Middelware
 const {isLoggedin} = require('../Global/Function/middleware');
 const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
-
 
 router.post('/update_name', isLoggedin , function(req, res, next) {
     var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx=";
@@ -35,12 +33,9 @@ router.post('/update_name', isLoggedin , function(req, res, next) {
 });
 
 router.post('/update_picture',isLoggedin, function(req, res, next) {
-    var picture = fs.readFileSync('./routes/avatar.png');
-    console.log(picture);
-    
+    var picture = fs.readFileSync('./routes/avatar.png');    
     var updateParams = new Buffer.from(picture);
-    console.log(updateParams);
-    
+   
     handleTransaction.encodeUpdatePictureTransaction(blockchainKey.public_key,req.body.image, blockchainKey.private_key)
     .then((response) => {
         var headers = {

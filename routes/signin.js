@@ -21,19 +21,15 @@ router.post('/', function(req, res, next) {
                 message: "Login Success!",
                 redirect: "/",
             })
-            
         }
         else { 
             return res.json({
                 error: "Invalid public key",
                 redirect: "/signin",
             })
-            
         }
 
     })(req, res, next);
 });
-
-
 
 module.exports = router;
