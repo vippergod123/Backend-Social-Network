@@ -1,19 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
-const publicNode = require('../Global/Variable/PublicNodeDomain');
+const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
 
 const Domain = require('../config/nodePublic');
 
 router.post('/', function(req, res, next) {
     var encodePictureTransaction = req.body.encodePictureTransaction;
+    console.log(encodePictureTransaction);
+    
     var headers = {
         'User-Agent': 'Super Agent/0.0.1',
         'Content-Type': 'application/json-rpc',
         'Accept': 'application/json-rpc'
     };
     var option = { 
-        url: publicNode,
+        url: publicDomain,
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
