@@ -46,7 +46,7 @@ router.post('/comment', function (req, res, next) {
         text: req.body.comment, 
     }
     var content = new Buffer.from(PlainTextContent.encode(comment));
-    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx="
     handleTransaction.encodeInteractTransaction(blockchainKey.public_key, hash, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
@@ -69,7 +69,7 @@ router.post('/reaction', function (req, res, next) {
         reaction: parseInt(req.body.reaction),
     }
     var content = new Buffer.from(ReactContent.encode(react));
-    var broadcastRequest = Domain.dragonflyDomain + "broadcast_tx_commit?tx="
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx="
     handleTransaction.encodeInteractTransaction(blockchainKey.public_key, hash, content, blockchainKey.private_key)
     .then((response) => {
         axios.get(broadcastRequest + response).then((resp) => {
