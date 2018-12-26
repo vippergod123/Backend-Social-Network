@@ -122,7 +122,7 @@ function SetTimeForBlock(data) {
     var count = 0;
     return new Promise((resolve, reject) => {
         data.forEach((block) => {
-            var GetBlock = Domain.dragonflyDomain + "block?height=" + block.height;
+            var GetBlock = publicDomain + "/block?height=" + block.height;
             axios.get(GetBlock)
             .then(res => {
                 block.time = res.data.result.block.header.time;

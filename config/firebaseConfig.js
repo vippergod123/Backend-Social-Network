@@ -7,8 +7,5 @@ admin.initializeApp({
 })
 
 admin.firestore().settings({timestampsInSnapshots:true});
-
-
 const firestore = admin.firestore();
-
 module.exports.firestore = firestore
