@@ -1,0 +1,13 @@
+{
+    "type": "service_account",
+    "project_id": "blockchain-5f681",
+    "private_key_id": "3a5ac2e8302ba878209de19550526671e996984d",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDX0dXmQyFVu6l0\ngcLxY22n3MUvEbQNh0x/SnM95d/9uDxcHfiSkjp15+Ah+3ro90psFCuNs8jujGwa\nzIfg9b4S58wHBbiUUdygs9ut/XeuX2bnRLzysdHH7+YsSb8fsMxXLI0fK2GmY+ct\nvWnDRdbC1rH+LJlz5hto51O2Md/5X3CPo/OrPgOkUjztwfYf/QN0lTVe9fWGXBbF\ny4C9f79rww+sKnoBI0fasTtcXT8qTSh7ejwQ1RpZl/kk7ce2detXXJlQcnJRzmK8\ntmyrLL3Xx7iVNAiis+YVoxkQc8L4o/pP8z95ULtZLsIKz1eewdlTN0j68VGVuC3t\nVvviorbRAgMBAAECggEAODGCqDnCbDg4nwVKZN+mpZZuIRtS7lLUMDCKYQuBjuZx\nkOqc1k0Mu7ZsPWzlS9NXpVx7GqI9Jx+Y5kFq/7/8hZ+lGA79SGEoOQ+bm2nrx5M/\nj+ft6qMyJATqwY1SHkZCblBDTmJVQqWwg9BVwWplyMVuAuhJ7Et1x5Kz0TSbRKqC\nbJ22r65LpEBrEpSVFyYEq3nPi6XgG2H/PrUr79UKzLC9S5nBIkPoI4k1a4VIdujI\nZ2pqL2XTwSqO9E76KU4wD79PAmbCrEAjkqS6MITv6ZbBB32FDfobE8pJkUF0IU4K\nk6AQhxHDWOGRkE2aR4EFCUVlGGXSRWyW5cTqmKgyIQKBgQD3R3C8cjoyDUcKcRUP\nl3uZ5Ww0907gkhzkcq2mfjgzksZhUW1D6exGDTSFoWdX3KSK5RnGZuFK1hj7h7ej\n4v5L0I8vosoMVDiFwzAfqh+PVUfGq3SYiJmQ/5tLhjp1yaPx2qOgDgt8kMfrvlyp\nrLAEoJvFkcEqsht6pcNmg8wJWwKBgQDfbl0sOFcP127SqsSMlU0G4aLGeVWIZKxB\nE494ehLwRv27QFlnmR6bb19Ke4zTzCPD3tNp3/XsdAn4eGWR/7+74ck7Fd4XNo1Y\nMTV0ps98TdThBEsxCicolzXPSX0IAuuxD0Fl8WrGXUVvahroMrXUEC+FXUMx4dQ0\nQ629+SQMQwKBgQCjJWBNBLQ+p6HyUq+JjPFAlSxyOaSx59TmKH9HdMlRxYnbVWTY\nxPJdOYMok1fikTGCbis2SlRkEqOC+IUBvNb4YE7IKAhUYBC2uBP9IDoYUDS98AtK\nQ/3Fu87S4mmZowLmo9EG3Z1YfxFYCU2LqOKs+uYrUMH4kHAu2ET2UwiANwKBgQCe\nhc0xbJ/Iq48DhQmCvQMzmK9Gphubc+ILIfevAN2jAJtRWayVJjxjB7fSPqqCMtpF\nRDk3ayEurH3Ofo2B8rR0dxOxCijSy2+pXPCSXS/k/8vEAqnel1eFIxOYiIlfP8M9\nkpdR3uFk8BQtoliI2kHLvdgZhTwBjjpjAomoubVrxQKBgDW99n1zzA11S/lsZhSq\n8Clo89/3+XxPzhki2D2ZmcVuGGck4PSsuovvBttc07p3WMQoKBPkt/zIBR0UHu3w\nBpCEWjsG2yWqQasdb2L7HWAsyHyI9a73orJATfawomED+qe8DUQW4Fiflfyu1tAP\nx/Vl46P0/JuSjopxu8zGZlns\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-0z0iz@blockchain-5f681.iam.gserviceaccount.com",
+    "client_id": "106087165284702346076",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-0z0iz%40blockchain-5f681.iam.gserviceaccount.com"
+}
+  

@@ -1,20 +1,25 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const axios = require('axios');
 
-
 const handleTransaction = require('../lib/handleTransaction');
-/* GET users listing. */
+const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
 
-router.post('/', function(req, res, next) {
-    var broadcastRequest = "https://komodo.forest.network/broadcast_tx_commit?tx="
+// Middleware
+const {isLoggedin} = require('../Global/Function/middleware');
 
-    handleTransaction
-    .encodePaymentTransaction(req.body.send_public_key, req.body.receive_public_key, req.body.amount, req.body.send_private_key)
+router.post('/',isLoggedin, function(req, res, next) {
+    var broadcastRequest = publicDomain + "/broadcast_tx_commit?tx="
+    var account = req.body.send_public_key;
+    var address = req.body.receive_public_key;
+    var amount = parseInt(req.body.amount);
+    var private_key = req.body.send_private_key;
+    handleTransaction.encodePaymentTransaction(account, address, amount, private_key)
     .then((response)=>{
     axios.get(broadcastRequest+response).then((resp)=>{
+        console.log(resp.data);
         res.status(200).json({
-        message: "create success",
+        message: "payment success",
         })
     })
     })
