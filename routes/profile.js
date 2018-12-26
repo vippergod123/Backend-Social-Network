@@ -10,8 +10,6 @@ const buf = require("buffer")
 const vstruct = require('varstruct');
 const base32 = require('base32.js')
 
-const Domain = require('../config/nodePublic');
-
 function isJson(str) {
   try {
       JSON.parse(str);

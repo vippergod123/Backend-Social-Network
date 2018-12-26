@@ -3,8 +3,6 @@ const router = express.Router();
 const request = require('request');
 const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
 
-const Domain = require('../config/nodePublic');
-
 router.post('/', function(req, res, next) {
     var encodePictureTransaction = req.body.encodePictureTransaction;
     console.log(encodePictureTransaction);

@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const Domain = require('../config/nodePublic');
 const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
 // Middleware
 const {isLoggedin} = require('../Global/Function/middleware');

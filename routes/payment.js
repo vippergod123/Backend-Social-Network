@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
-const Domain = require('../config/nodePublic');
 const handleTransaction = require('../lib/handleTransaction');
 const {publicDomain } = require('../Global/Variable/PublicNodeDomain');
 
