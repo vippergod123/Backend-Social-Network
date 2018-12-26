@@ -220,51 +220,69 @@
 // // module.exports.IntervalGetAllBlock = IntervalGetAllBlock;
 
 
-const {firestore} = require('./config/firebaseConfig');
-const FirestorePost= firestore.collection("Post")
-const moment = require('moment');
-var transaction = { 
-    version: 1,
-    account: 'GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD',
-    operation: "post",
-    sequence: 69,
-    params: {
-        content: {
-            type:1,
-            text: "Chao ngay moi"
-        },
-        key: [],
-    },
-    header: { 
-        time: "2018-12-24T17:40:48.351479818Z",
-        data_hash: "82C0113305A966A293F7C130F9E3F475715F976A51FA3E81E789F454BBD84397",
-    },
+// const {firestore} = require('./config/firebaseConfig');
+// const FirestorePost= firestore.collection("Post")
+// const moment = require('moment');
+// var transaction = { 
+//     version: 1,
+//     account: 'GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD',
+//     operation: "post",
+//     sequence: 69,
+//     params: {
+//         content: {
+//             type:1,
+//             text: "Chao ngay moi"
+//         },
+//         key: [],
+//     },
+//     header: { 
+//         time: "2018-12-24T17:40:48.351479818Z",
+//         data_hash: "82C0113305A966A293F7C130F9E3F475715F976A51FA3E81E789F454BBD84397",
+//     },
+// }
+
+// // const PushPostToFirebase = () => { 
+// //     var operation = transaction.operation
+// //     if ( operation === "post" ){
+            
+// //             FirestorePost.doc().set({
+// //                 post: transaction,
+// //                 like: new Array(),
+// //                 comment: new Array(),
+// //             }).then(() => { 
+// //                 console.log(123);
+// //             })
+// //             .catch(err => {
+// //                 console.log(err);
+                
+// //             })
+// //     }
+    
+// //  } 
+
+// var time = transaction.header.time
+// var date = new Date(time)
+// date = date.getTime()
+// var second = moment(date).fromNow()
+// console.log(second);
+  
+function Payment () { 
+            const tx = {
+                version: 1, 
+                operation: "payment",
+                params: {
+                    address: address,
+                    amount: amount,
+                },
+                account: "GCXEQNLGRDKEPUPLCZRGXYKAUQSI4Y56OHJPM4N35ZYZGH4LXMVUK5SD",
+                sequence: sequence,
+                memo: Buffer.alloc(0),
+            }
+            transaction.sign(tx, private_key);
+            const txEncode =  "0x" + transaction.encode(tx).toString('hex')
+         
 }
 
-// const PushPostToFirebase = () => { 
-//     var operation = transaction.operation
-//     if ( operation === "post" ){
-            
-//             FirestorePost.doc().set({
-//                 post: transaction,
-//                 like: new Array(),
-//                 comment: new Array(),
-//             }).then(() => { 
-//                 console.log(123);
-//             })
-//             .catch(err => {
-//                 console.log(err);
-                
-//             })
-//     }
-    
-//  } 
-
-var time = transaction.header.time
-var date = new Date(time)
-date = date.getTime()
-var second = moment(date).fromNow()
-console.log(second);
-  
+Payment()
 
 //  PushPostToFirebase()
