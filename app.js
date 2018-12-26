@@ -61,20 +61,20 @@ app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/account', accountRouter);
-app.use('/broadcast_commit', broadCastCommitRouter);
-app.use('/create_account', createAccountRouter);
-app.use('/create_post', createPostRouter);
-app.use('/profile', profileRouter);
-app.use('/payment', paymentRouter);
-app.use('/update_account', updateAccountRouter);
-app.use('/update_picture', updatePictureRouter);
+// app.use('/account', accountRouter);
+// app.use('/broadcast_commit', broadCastCommitRouter);
+// app.use('/create_account', createAccountRouter);
+// app.use('/create_post', createPostRouter);
+// app.use('/profile', profileRouter);
+// app.use('/payment', paymentRouter);
+// app.use('/update_account', updateAccountRouter);
+// app.use('/update_picture', updatePictureRouter);
 
-app.use('/signup', signupRouter)
-app.use('/signin',signinRouter);
-app.use('/signout', signoutRouter)
-// Test Router
-app.use('/decode', decodeTxRouter)
+// app.use('/signup', signupRouter)
+// app.use('/signin',signinRouter);
+// app.use('/signout', signoutRouter)
+// // Test Router
+// app.use('/decode', decodeTxRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
