@@ -24,7 +24,7 @@ var updatePictureRouter = require('./routes/update_picture');
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
 var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
 
-IntervalGetAccount();
+// IntervalGetAccount();
 // IntervalGetAllBlock();
 
 var app = express();
