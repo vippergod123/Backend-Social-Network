@@ -22,10 +22,10 @@ var decodeTxRouter = require('./routes/decode_transaction');
 var updatePictureRouter = require('./routes/update_picture');
 
 // var IntervalGetAllBlock = require('./lib/AsyncBlock/IntervalGetAllBlock');
-// var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
-
-// IntervalGetAccount();
 // IntervalGetAllBlock();
+
+var IntervalGetAccount = require('./lib/AsyncBlock/IntervalGetAccount');
+IntervalGetAccount();
 
 var app = express();
 
