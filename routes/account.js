@@ -51,9 +51,7 @@ function isJson(str) {
 
 function GetOnePage(public_key, page){
     return new Promise((resolve, reject) => { 
-const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
-const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
-        var GetTransaction = publicDomain + "/tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=30";
+        var GetTransaction = publicDomain + "/tx_search?query=%22account=%27" + public_key + "%27%22&page=" + page + "&per_page=100";
         axios.get(GetTransaction)
         .then((response) => {
             resolve(response.data.result.txs);
@@ -66,13 +64,13 @@ const {publicDomain} = require('../Global/Variable/PublicNodeDomain');
 
 function LoadAllBlock(public_key) {
     return new Promise((resolve, reject) => { 
-        var TransactionFromPublicNode = publicDomain + "/tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=30";
+        var TransactionFromPublicNode = publicDomain + "/tx_search?query=%22account=%27" + public_key + "%27%22&page=1&per_page=100";
         axios.get(TransactionFromPublicNode)
         .then((response) => { 
             if(response.data.result.txs.length === 0) {
                 reject("txs is null");
             }
-            var page = Math.floor(response.data.result.total_count/30) + 1;
+            var page = Math.floor(response.data.result.total_count/100) + 1;
             var foo = [];
             for (var i = 2; i <= page; i++) {
                 foo.push(i);
@@ -173,7 +171,7 @@ function CalculateEnergy(txs, public_key) {
             energyrecovery = Math.ceil((now - response[response.length-1].time) * bandwidthLimit / BANDWIDTH_PERIOD);
             var energy = response[response.length-1].energy + energyrecovery<bandwidthLimit ? response[response.length-1].energy+energyrecovery : bandwidthLimit;
             response[response.length-1].energy = energy;
-            // console.log(energyrecovery + " " + energy);
+            console.log(energyrecovery + " " + energy);
             resolve(response);
         })
     })
@@ -186,9 +184,12 @@ router.post('/',isLoggedin, function(req, res, next) {
     var picture = null;
     var followings;
     var TransactionFromPublicNode = publicDomain + "/tx_search?query=%22account=%27" + req.body.public_key + "%27%22&page=1&per_page=100";
-    axios.get(TransactionFromPublicNode)
+    // axios.get(TransactionFromPublicNode)
+    LoadAllBlock(req.body.public_key)
     .then((resp) => {
-        var response = resp.data.result.txs;
+        // var response = resp.data.result.txs;
+        var response = resp;
+        console.log(response.length);
         CalculateEnergy(response, req.body.public_key)
         .then((response) => {  
             const data = response.map((each) => {
